@@ -1,6 +1,6 @@
 # webgames
 
-Browser board games, built like an enterprise webapp. Available at [games.levilutz.com](https://games.levilutz.com).
+Browser board games, built like an enterprise webapp. Will be available at [games.levilutz.com](https://games.levilutz.com).
 
 ## Purpose
 
