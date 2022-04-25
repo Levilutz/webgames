@@ -1,0 +1,16 @@
+global:
+  postgresAdminUser: admin
+  postgresAdminPassword: password
+  postgresDbName: userapi
+
+postgres:
+  image:
+    pullPolicy: Always
+    repository: docker.io/postgres
+    tag: "14.1"
+
+  pvc:
+    size: 1Gi
+    storageClass:
+
+  replicas: 1
