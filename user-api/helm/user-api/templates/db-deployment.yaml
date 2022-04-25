@@ -39,7 +39,19 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: db-volume
+      initContainers:
+        - command: ['sh', '-c', 'mkdir -p /var/lib/postgresql/data && cp /tmp/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf']
+          image: {{ printf "%s:%s" .Values.postgres.initImage.repository .Values.postgres.initImage.tag | quote}}
+          imagePullPolicy: {{ .Values.postgres.initImage.pullPolicy }}
+          name: config
+          volumeMounts:
+            - mountPath: /tmp/pg_hba.conf
+              name: config-volume
+              subPath: pg_hba.conf
       volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "user-api.fullname-postgres" . }}
         - name: db-volume
           persistentVolumeClaim:
             claimName: {{ include "user-api.fullname-postgres" . }}
