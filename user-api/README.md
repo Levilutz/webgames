@@ -5,7 +5,7 @@ A single source API to provide data about users and authentication. Meant to be 
 
 ## Technologies
 
-Python REST API, persistence in a PostgresQL database.
+Python REST API built with FastAPI, persistence in a PostgresQL database.
 
 
 ## Usage

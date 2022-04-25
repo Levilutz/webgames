@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "user-api.fullname" . }}
+  name: {{ include "user-api.fullname-postgres" . }}
   labels:
     {{- include "user-api.labels" . | nindent 4 }}
 spec:

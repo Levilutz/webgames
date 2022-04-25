@@ -4,10 +4,14 @@
 
 {{- define "user-api.fullname" -}}
 {{- if contains .Chart.Name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- .Release.Name | trunc (int (sub 63 10)) | trimSuffix "-" }}
 {{- else }}
 {{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
+{{- end }}
+
+{{- define "user-api.fullname-postgres" -}}
+{{ printf "%s-postgres" (include "user-api.fullname" .) }}
 {{- end }}
 
 {{- define "user-api.chart" -}}
@@ -26,12 +30,4 @@ helm.sh/chart: {{ include "user-api.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{- define "user-api.servicePath" -}}
-{{- printf "%s.%s.svc.cluster.local" (include "user-api.fullname" .) .Release.Namespace }}
-{{- end }}
-
-{{- define "user-api.dbConnectionString" -}}
-{{- printf "postgresql://%s:%s@%s:5432/%s" .Values.global.postgresAdminUser .Values.global.postgresAdminPassword (include "user-api.servicePath" .) .Values.global.postgresDbName }}
 {{- end }}

@@ -21,7 +21,7 @@ These services should have a few things in common:
 
 Besides that, each of these is services is meant to be an independent playground for varying languages, technologies, and design patterns.
 
-Ideally, these should each be developed generally enough that it's easy to deploy them on an arbitrary cluster attached to an arbitrary domain without significant work.
+Ideally, general and deployment-specific code should be partitioned enough that it's easy to deploy each service on an arbitrary cluster / cloud provider / domain without significant work.
 
 
 ## TODO

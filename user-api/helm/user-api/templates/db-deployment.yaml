@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     {{- include "user-api.labels" . | nindent 4 }}
-  name: {{ include "user-api.fullname" . }}
+  name: {{ include "user-api.fullname-postgres" . }}
 spec:
   replicas: {{ .Values.postgres.replicas }}
   selector:
@@ -17,11 +17,20 @@ spec:
       containers:
         - env:
             - name: POSTGRES_DB
-              value: {{ .Values.global.postgresDbName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "user-api.fullname-postgres" . }}
+                  key: postgresDbName
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.global.postgresAdminPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "user-api.fullname-postgres" . }}
+                  key: postgresAdminPassword
             - name: POSTGRES_USER
-              value: {{ .Values.global.postgresAdminUser }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "user-api.fullname-postgres" . }}
+                  key: postgresAdminUser
           image: {{ printf "%s:%s" .Values.postgres.image.repository .Values.postgres.image.tag | quote}}
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
           name: postgres
@@ -33,4 +42,4 @@ spec:
       volumes:
         - name: db-volume
           persistentVolumeClaim:
-            claimName: {{ include "user-api.fullname" . }}
+            claimName: {{ include "user-api.fullname-postgres" . }}

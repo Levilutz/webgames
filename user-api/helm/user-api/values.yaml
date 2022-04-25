@@ -1,8 +1,3 @@
-global:
-  postgresAdminUser: admin
-  postgresAdminPassword: password
-  postgresDbName: userapi
-
 postgres:
   image:
     pullPolicy: Always
