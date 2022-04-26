@@ -11,7 +11,22 @@
 {{- end }}
 
 {{- define "user-api.fullname-postgres" -}}
-{{ printf "%s-postgres" (include "user-api.fullname" .) }}
+{{- printf "%s-postgres" (include "user-api.fullname" .) }}
+{{- end }}
+
+{{- define "user-api.fullname-migrate" -}}
+{{- printf "%s-migrate" (include "user-api.fullname" .) }}
+{{- end }}
+
+{{- define "user-api.tag-migrate" -}}
+{{- if and (not .Values.global.tagBaseOverride) (not .Values.migrate.image.tag) (not .Values.migrate.image.tagBase) }}
+{{- fail "Image for migrate requires at least some tag set" }}
+{{- end }}
+{{- if .Values.migrate.image.tag }}
+{{- .Values.migrate.image.tag }}
+{{- else }}
+{{- printf "%s-%s" (default .Values.migrate.image.tagBase .Values.global.tagBaseOverride) .Values.migrate.image.tagContainer }}
+{{- end }}
 {{- end }}
 
 {{- define "user-api.chart" -}}
@@ -30,4 +45,8 @@ helm.sh/chart: {{ include "user-api.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{- define "user-api.db-dnsname" -}}
+{{- printf "%s.%s.svc.cluster.local" (include "user-api.fullname-postgres" .) .Release.Namespace }}
 {{- end }}
