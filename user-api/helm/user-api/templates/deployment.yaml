@@ -19,17 +19,17 @@ spec:
       containers:
         - env:
             - name: DB_ADDRESS
-              value: {{ include "user-api.db-dnsname" . }}
+              value: {{ template "postgres.dnsname" .Subcharts.postgres }}
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
                   key: postgresDbName
-                  name: {{ include "user-api.fullname-postgres" . }}
+                  name: {{ template "postgres.fullname" .Subcharts.postgres }}
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
                   key: postgresAdminPassword
-                  name: {{ include "user-api.fullname-postgres" . }}
+                  name: {{ template "postgres.fullname" .Subcharts.postgres }}
             - name: DB_PORT
               value: "5432"
             - name: DB_USER

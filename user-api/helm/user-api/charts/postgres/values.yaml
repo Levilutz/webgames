@@ -14,9 +14,9 @@ migrate:
     # If tag is set, it's used
     # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
     tag:
-    tagBase: 65cecf20061b0c62c511e10fbb7e5a3111c02288
+    tagBase:
     tagContainer: migrations
 
 pvc:
-  size: 10Gi
-  storageClass: vultr-block-storage
+  size: 1Gi
+  storageClass:

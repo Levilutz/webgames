@@ -18,26 +18,3 @@ ingress:
   tls:
     enabled: false
     secretName:
-
-postgres:
-  image:
-    pullPolicy: Always
-    repository: docker.io/postgres
-    tag: "14.1"
-
-  pvc:
-    size: 1Gi
-    storageClass:
-
-  replicas: 1
-
-migrate:
-  enabled: true
-  image:
-    pullPolicy: Always
-    repository: docker.io/levilutz/webgames-user-api
-    # If tag is set, it's used
-    # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
-    tag:
-    tagBase:
-    tagContainer: migrations
