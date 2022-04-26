@@ -1,0 +1,22 @@
+global:
+  tagBaseOverride:
+
+image:
+  pullPolicy: Always
+  repository: docker.io/postgres
+  tag: "14.2"
+
+migrate:
+  enabled: true
+  image:
+    pullPolicy: Always
+    repository: docker.io/levilutz/webgames-user-api
+    # If tag is set, it's used
+    # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
+    tag:
+    tagBase: 65cecf20061b0c62c511e10fbb7e5a3111c02288
+    tagContainer: migrations
+
+pvc:
+  size: 10Gi
+  storageClass: vultr-block-storage
