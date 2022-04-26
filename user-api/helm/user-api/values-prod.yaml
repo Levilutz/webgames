@@ -2,3 +2,10 @@ postgres:
   pvc:
     size: 10Gi
     storageClass: vultr-block-storage
+
+ingress:
+  enabled: true
+  host: games.levilutz.com
+  tls:
+    enabled: true
+    secretName: ingress-cert
