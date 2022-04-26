@@ -15,7 +15,7 @@ RUN pip3 install --upgrade --user -r /requirements.txt
 
 
 # Migrations image
-FROM base as migrations
+FROM base as api
 LABEL org.opencontainers.image.authors="Levi Lutz (contact.levilutz@gmail.com)"
 
 COPY --from=builder /root/.local /root/.local
@@ -23,4 +23,4 @@ ENV PATH=/root/.local/bin:$PATH
 COPY src /src
 
 WORKDIR /src
-CMD ["python3", "entrypoint.py"]
+CMD ["uvicorn", "--port=80", "--host=0.0.0.0", "main:app"]
