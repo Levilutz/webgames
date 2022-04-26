@@ -19,20 +19,20 @@ spec:
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresDbName
+                  name: {{ include "user-api.fullname-postgres" . }}
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresAdminPassword
+                  name: {{ include "user-api.fullname-postgres" . }}
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresAdminUser
+                  name: {{ include "user-api.fullname-postgres" . }}
           image: {{ printf "%s:%s" .Values.migrate.image.repository (include "user-api.tag-migrate" .) | quote }}
           imagePullPolicy: {{ .Values.migrate.image.pullPolicy }}
           name: main

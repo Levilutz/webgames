@@ -19,18 +19,18 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresDbName
+                  name: {{ include "user-api.fullname-postgres" . }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresAdminPassword
+                  name: {{ include "user-api.fullname-postgres" . }}
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "user-api.fullname-postgres" . }}
                   key: postgresAdminUser
+                  name: {{ include "user-api.fullname-postgres" . }}
           image: {{ printf "%s:%s" .Values.postgres.image.repository .Values.postgres.image.tag | quote}}
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
           name: postgres

@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "user-api.fullname-postgres" . }}
   labels:
     {{- include "user-api.labels" . | nindent 4 }}
+  name: {{ include "user-api.fullname-postgres" . }}
 spec:
   ports:
     - name: postgres
-      protocol: TCP
       port: 5432
+      protocol: TCP
       targetPort: 5432
   selector:
     {{- include "user-api.selectorLabels" . | nindent 4 }}
