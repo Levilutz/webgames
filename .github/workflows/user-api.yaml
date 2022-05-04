@@ -37,6 +37,37 @@ jobs:
         run: |
           PYTHONPATH=$PYTHONPATH:./src pytest -v tests/unit
 
+  migrations-lint-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Python Installs
+        working-directory: user-api/migrate
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install --upgrade -r requirements.txt
+          pip3 install --upgrade -r requirements_test.txt
+
+      - name: Lint
+        working-directory: user-api/migrate/src
+        run: |
+          mypy . --strict
+          black --check --diff .
+          flake8 --max-line-length=88 .
+
+      - name: Unit Test
+        working-directory: user-api/migrate
+        run: |
+          PYTHONPATH=$PYTHONPATH:./src pytest -v tests/unit
+
   api-build-push:
     needs: api-lint-test
 
@@ -57,6 +88,8 @@ jobs:
           docker push $DOCKER_REPO:$tag
 
   migrations-build-push:
+    needs: migrations-lint-test
+
     runs-on: ubuntu-latest
 
     steps:
