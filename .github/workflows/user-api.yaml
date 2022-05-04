@@ -32,6 +32,12 @@ jobs:
           black --check --diff .
           flake8 --max-line-length=88 .
 
+      - name: Unit Test
+        working-directory: user-api/api
+        run: |
+          PYTHONPATH=$PYTHONPATH:./src
+          pytest -v tests/unit
+
   api-build-push:
     needs: api-lint-test
 
