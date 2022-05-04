@@ -6,7 +6,35 @@ env:
   DOCKER_REPO: "docker.io/levilutz/webgames-user-api"
 
 jobs:
+  api-lint-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Python Installs
+        working-directory: user-api/api
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install --upgrade -r requirements.txt
+          pip3 install --upgrade -r requirements_test.txt
+
+      - name: Lint
+        working-directory: user-api/api/src
+        run: |
+          mypy . --strict
+          black --check --diff .
+          flake8 --max-line-length=88 .
+
   api-build-push:
+    needs: api-lint-test
+
     runs-on: ubuntu-latest
 
     steps:
