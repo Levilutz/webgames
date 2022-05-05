@@ -2,12 +2,11 @@ from fastapi import APIRouter
 
 from internal import users
 
-import config
 from routers import api_models
 from routers.utils import sanitize_excs
 
 
-router = APIRouter(prefix=config.EXPECTED_PREFIX)
+router = APIRouter()
 
 
 @router.get("/register")
