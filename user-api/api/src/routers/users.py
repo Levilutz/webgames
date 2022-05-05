@@ -9,7 +9,7 @@ from routers.utils import sanitize_excs
 router = APIRouter()
 
 
-@router.get("/register")
+@router.post("/register")
 async def register(
     register_request: api_models.RegisterRequest,
 ) -> api_models.SuccessResponse:
