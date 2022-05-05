@@ -37,6 +37,10 @@ spec:
                 secretKeyRef:
                   key: postgresAdminUser
                   name: {{ include "user-api.fullname-postgres" . }}
+            {{- if .Values.ingress.prefix }}
+            - name: EXPECTED_PREFIX
+              value: {{ .Values.ingress.prefix | quote }}
+            {{- end }}
           image: {{ printf "%s:%s" .Values.image.repository (include "user-api.tag-api" .) | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: uvicorn

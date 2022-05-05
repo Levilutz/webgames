@@ -2,8 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  {{- if .Values.ingress.prefix }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+  {{- end }}
   labels:
     {{- include "user-api.labels" . | nindent 4 }}
   name: {{ include "user-api.fullname" . }}
@@ -18,8 +20,10 @@ spec:
                 name: {{ include "user-api.fullname" . }}
                 port:
                   number: 80
-            path: /api/users(/|$)(.*)
+            {{- if .Values.ingress.prefix }}
+            path: {{ printf "%s(/|$)(.*)" .Values.ingress.prefix }}
             pathType: Prefix
+            {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:

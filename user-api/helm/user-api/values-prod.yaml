@@ -6,6 +6,7 @@ postgres:
 ingress:
   enabled: true
   host: games.levilutz.com
+  prefix: /api/users
   tls:
     enabled: true
     secretName: ingress-cert
