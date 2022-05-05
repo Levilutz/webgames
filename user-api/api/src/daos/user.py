@@ -6,6 +6,7 @@ from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
 from daos.database import AsyncConnection
+from exceptions import InternalError
 
 
 class User(BaseModel):
@@ -16,9 +17,11 @@ class User(BaseModel):
     async def create(self, conn: AsyncConnection) -> None:
         """Create the current user in the database."""
         if self.find_by_id(conn, self.user_id) is not None:
-            raise Exception(f"Cannot create User - id {self.user_id} already exists")
+            raise InternalError(
+                f"Cannot create User - id {self.user_id} already exists"
+            )
         if self.find_by_username(conn, self.username) is not None:
-            raise Exception(f"Cannot create User - username {self.username} taken")
+            raise InternalError(f"Cannot create User - username {self.username} taken")
 
         async with conn.cursor() as cur:
             await cur.execute(
@@ -89,7 +92,7 @@ class User(BaseModel):
         """Raise exception if the user id doesn't exist."""
         user = await cls.find_by_id(conn, user_id)
         if user is None:
-            raise Exception(f"Cannot find User - id {user_id} does not exist")
+            raise InternalError(f"Cannot find User - id {user_id} does not exist")
         return user
 
     @classmethod
@@ -97,5 +100,7 @@ class User(BaseModel):
         """Raise exception if the user id doesn't exist."""
         user = await cls.find_by_username(conn, username)
         if user is None:
-            raise Exception(f"Cannot find User - username {username} does not exist")
+            raise InternalError(
+                f"Cannot find User - username {username} does not exist"
+            )
         return user

@@ -7,6 +7,7 @@ from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
 from daos.database import AsyncConnection
+from exceptions import InternalError
 
 
 SESSION_TTL_HOURS = 12
@@ -21,7 +22,7 @@ class Session(BaseModel):
     async def create(self, conn: AsyncConnection) -> None:
         """Create the current session in the database."""
         if self.find_by_id(conn, self.session_id) is not None:
-            raise Exception(
+            raise InternalError(
                 f"Cannot create Session - id {self.session_id} already exists"
             )
 
@@ -76,7 +77,7 @@ class Session(BaseModel):
         """Raise exception if the session doesn't exist."""
         session = await cls.find_by_id(conn, session_id)
         if session is None:
-            raise Exception(f"Cannot find Session - id {session_id} does not exist")
+            raise InternalError(f"Cannot find Session - id {session_id} does not exist")
         return session
 
     @classmethod
@@ -86,7 +87,7 @@ class Session(BaseModel):
         """Raise exception if the session doesn't exist."""
         session = await cls.find_by_token(conn, client_token)
         if session is None:
-            raise Exception(
+            raise InternalError(
                 f"Cannot find Session - token {client_token} does not exist"
             )
         return session

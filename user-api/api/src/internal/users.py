@@ -8,6 +8,7 @@ import bcrypt
 from pydantic import UUID4
 
 from daos import Session, User, get_db_connection
+from exceptions import UserError
 
 
 legal_username_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\\-_\\.]{2,32}$")
@@ -43,19 +44,24 @@ async def register(username: str, password: str) -> User:
 
     # Validate input is legal
     if not _legal_username(username):
-        raise Exception("Invalid username")
+        raise UserError("Invalid username")
     if not _legal_password(password):
-        raise Exception("Invalid password")
+        raise UserError("Invalid password")
 
-    # Make a new user object
-    new_user = User(
-        user_id=uuid4(),
-        username=username,
-        password_hash=_password_hash(password),
-    )
-
-    # Insert the user into the database
     async with await get_db_connection() as conn:
+        # Check username isn't claimed
+        existing_user = await User.find_by_username(conn, username)
+        if existing_user is not None:
+            raise UserError(f"Username {username} already claimed")
+
+        # Make a new user object
+        new_user = User(
+            user_id=uuid4(),
+            username=username,
+            password_hash=_password_hash(password),
+        )
+
+        # Insert the user into the database
         await new_user.create(conn)
 
     return new_user
@@ -66,7 +72,7 @@ async def change_password(username: str, new_password: str) -> None:
 
     # Check new password is legal
     if not _legal_password(new_password):
-        raise Exception("Invalid password")
+        raise UserError("Invalid password")
 
     async with await get_db_connection() as conn:
         # Find the user
@@ -80,9 +86,9 @@ async def login(username: str, password: str) -> Session:
     """Attempt to a log a user in, return session if successful."""
     # Validate input is legal
     if not _legal_username(username):
-        raise Exception("Invalid username")
+        raise UserError("Invalid username")
     if not _legal_password(password):
-        raise Exception("Invalid password")
+        raise UserError("Invalid password")
 
     async with await get_db_connection() as conn:
         # Get the associated user
@@ -90,7 +96,7 @@ async def login(username: str, password: str) -> Session:
 
         # Validate the password
         if not _password_verify(password, user.password_hash):
-            raise Exception("Invalid username or password")
+            raise UserError("Invalid username or password")
 
         # Make a new session object
         new_session = Session(
@@ -114,7 +120,7 @@ async def logout(token_or_session_id: UUID4) -> None:
         if session is None:
             session = await Session.find_by_token(conn, token_or_session_id)
         if session is None:
-            raise Exception("Failed to find given session")
+            raise UserError("Failed to find given session")
 
         # Delete the session
         await session.delete(conn)
