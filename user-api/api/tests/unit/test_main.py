@@ -1,4 +1,4 @@
-import main
+from routers import main
 
 
 def test_app_exists():
