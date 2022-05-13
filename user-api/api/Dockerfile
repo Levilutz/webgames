@@ -14,7 +14,7 @@ COPY requirements.txt /requirements.txt
 RUN pip3 install --upgrade --user -r /requirements.txt
 
 
-# Migrations image
+# Api image
 FROM base as api
 LABEL org.opencontainers.image.authors="Levi Lutz (contact.levilutz@gmail.com)"
 
