@@ -1,0 +1,8 @@
+postgres:
+  pvc:
+    size: 10Gi
+    storageClass: vultr-block-storage
+
+ingress:
+  enabled: true
+  prefix: /api/users

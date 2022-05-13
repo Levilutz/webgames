@@ -10,9 +10,12 @@ metadata:
     {{- include "user-api.labels" . | nindent 4 }}
   name: {{ include "user-api.fullname" . }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ default "nginx" .Values.ingress.className | quote }}
   rules:
-    - host: {{ .Values.ingress.host | quote }}
+    - # Only use host if ingress controller has a loadbalancer
+      {{- if .Values.ingress.host }}
+      host: {{ .Values.ingress.host | quote }}
+      {{- end }}
       http:
         paths:
           - backend:

@@ -1,0 +1,5 @@
+kind: Module
+name: user-api-migrations
+type: container
+build:
+  targetImage: migrations

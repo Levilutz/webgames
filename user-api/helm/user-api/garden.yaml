@@ -1,0 +1,34 @@
+kind: Module
+name: user-api
+type: helm
+serviceResource:
+  kind: Deployment
+  name: '{{ include "user-api.fullname" . }}'
+  containerModule: user-api-api
+build:
+  dependencies:
+    - user-api-api
+    - user-api-migrations
+dependencies:
+  - ingress-nginx  # ingress-nginx self-disables when necessary
+valueFiles:
+  - values.yaml
+  - values.${environment.name}.yaml
+values:
+  ingress:
+    className: nginx-${environment.namespace}
+  image:
+    repository: ${modules.user-api-api.outputs.deployment-image-name}
+    tag: ${modules.user-api-api.version}
+  postgres:
+    migrate:
+      image:
+        repository: ${modules.user-api-migrations.outputs.deployment-image-name}
+        tag: ${modules.user-api-migrations.version}
+devMode:
+  command: ["uvicorn", "--port=80", "--host=0.0.0.0", "--reload", "routers.main:app"]
+  sync:
+    - source: src
+      target: /src
+      exclude:
+        - "**/__pycache__/**/*"
