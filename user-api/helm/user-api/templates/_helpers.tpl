@@ -18,28 +18,6 @@
 {{- printf "%s-migrate" (include "user-api.fullname" .) }}
 {{- end }}
 
-{{- define "user-api.tag-api" -}}
-{{- if and (not .Values.global.tagBaseOverride) (not .Values.image.tag) (not .Values.image.tagBase) }}
-{{- fail "Image for api requires at least some tag set" }}
-{{- end }}
-{{- if .Values.image.tag }}
-{{- .Values.image.tag }}
-{{- else }}
-{{- printf "%s-%s" (default .Values.image.tagBase .Values.global.tagBaseOverride) .Values.image.tagContainer }}
-{{- end }}
-{{- end }}
-
-{{- define "user-api.tag-migrate" -}}
-{{- if and (not .Values.global.tagBaseOverride) (not .Values.migrate.image.tag) (not .Values.migrate.image.tagBase) }}
-{{- fail "Image for migrate requires at least some tag set" }}
-{{- end }}
-{{- if .Values.migrate.image.tag }}
-{{- .Values.migrate.image.tag }}
-{{- else }}
-{{- printf "%s-%s" (default .Values.migrate.image.tagBase .Values.global.tagBaseOverride) .Values.migrate.image.tagContainer }}
-{{- end }}
-{{- end }}
-
 {{- define "user-api.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}

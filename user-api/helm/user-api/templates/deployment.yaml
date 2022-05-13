@@ -17,7 +17,12 @@ spec:
         {{- include "user-api.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - env:
+        - args:
+            - "--port=80"
+            - "--host=0.0.0.0"
+            - "user_api.routers.main:app"
+          command: ["uvicorn"]
+          env:
             - name: DB_ADDRESS
               value: {{ template "postgres.dnsname" .Subcharts.postgres }}
             - name: DB_NAME
@@ -41,7 +46,7 @@ spec:
             - name: EXPECTED_PREFIX
               value: {{ .Values.ingress.prefix | quote }}
             {{- end }}
-          image: {{ printf "%s:%s" .Values.image.repository (include "user-api.tag-api" .) | quote }}
+          image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: uvicorn
           ports:

@@ -6,8 +6,8 @@ from typing import Optional
 from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
-from daos.database import AsyncConnection
-from exceptions import InternalError
+from user_api.daos.database import AsyncConnection
+from user_api.exceptions import InternalError
 
 
 SESSION_TTL_HOURS = 12

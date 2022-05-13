@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from psycopg.types.json import set_json_dumps, set_json_loads
 import orjson
 
-import config
-from internal.users import clean_sessions_loop
-from routers import users
+from user_api import config
+from user_api.internal.users import clean_sessions_loop
+from user_api.routers import users
 
 
 app = FastAPI(root_path=config.EXPECTED_PREFIX)

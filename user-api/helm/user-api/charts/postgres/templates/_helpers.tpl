@@ -14,17 +14,6 @@
 {{- printf "%s-migrate" (include "postgres.fullname" .) }}
 {{- end }}
 
-{{- define "postgres.tag-migrate" -}}
-{{- if and (not .Values.global.tagBaseOverride) (not .Values.migrate.image.tag) (not .Values.migrate.image.tagBase) }}
-{{- fail "Image for migrate requires at least some tag set" }}
-{{- end }}
-{{- if .Values.migrate.image.tag }}
-{{- .Values.migrate.image.tag }}
-{{- else }}
-{{- printf "%s-%s" (default .Values.migrate.image.tagBase .Values.global.tagBaseOverride) .Values.migrate.image.tagContainer }}
-{{- end }}
-{{- end }}
-
 {{- define "postgres.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}

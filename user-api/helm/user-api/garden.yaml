@@ -4,11 +4,10 @@ type: helm
 serviceResource:
   kind: Deployment
   name: '{{ include "user-api.fullname" . }}'
-  containerModule: user-api-api
+  containerModule: user-api-container
 build:
   dependencies:
-    - user-api-api
-    - user-api-migrations
+    - user-api-container
 dependencies:
   - ingress-nginx  # ingress-nginx self-disables when necessary
 valueFiles:
@@ -18,17 +17,18 @@ values:
   ingress:
     className: nginx-${environment.namespace}
   image:
-    repository: ${modules.user-api-api.outputs.deployment-image-name}
-    tag: ${modules.user-api-api.version}
+    repository: ${modules.user-api-container.outputs.deployment-image-name}
+    tag: ${modules.user-api-container.version}
   postgres:
     migrate:
       image:
-        repository: ${modules.user-api-migrations.outputs.deployment-image-name}
-        tag: ${modules.user-api-migrations.version}
+        repository: ${modules.user-api-container.outputs.deployment-image-name}
+        tag: ${modules.user-api-container.version}
 devMode:
-  command: ["uvicorn", "--port=80", "--host=0.0.0.0", "--reload", "routers.main:app"]
+  command: ["uvicorn"]
+  args: ["--port=80", "--host=0.0.0.0", "--reload", "user_api.routers.main:app"]
   sync:
-    - source: src
-      target: /src
+    - source: user_api
+      target: /src/user_api
       exclude:
         - "**/__pycache__/**/*"

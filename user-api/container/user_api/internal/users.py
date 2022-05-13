@@ -7,8 +7,8 @@ from uuid import uuid4
 import bcrypt
 from pydantic import UUID4
 
-from daos import Session, User, get_db_connection
-from exceptions import UserError
+from user_api.daos import Session, User, get_db_connection
+from user_api.exceptions import UserError
 
 
 legal_username_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\\-_\\.]{2,32}$")

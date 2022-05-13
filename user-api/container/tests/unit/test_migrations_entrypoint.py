@@ -1,4 +1,4 @@
-import entrypoint
+from migrations import entrypoint
 
 
 def test_run_migrations_exists():

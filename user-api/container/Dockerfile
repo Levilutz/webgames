@@ -14,13 +14,17 @@ COPY requirements.txt /requirements.txt
 RUN pip3 install --upgrade --user -r /requirements.txt
 
 
-# Api image
-FROM base as api
+# Main image
+FROM base as main
 LABEL org.opencontainers.image.authors="Levi Lutz (contact.levilutz@gmail.com)"
 
 COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
-COPY src /src
+ENV PYTHONPATH=/src:$PYTHONPATH
+
+COPY user_api /src/user_api
+COPY migrations /src/migrations
+COPY tests /src/tests
 
 WORKDIR /src
-CMD ["uvicorn", "--port=80", "--host=0.0.0.0", "routers.main:app"]
+CMD ["echo", "No cmd provided"]

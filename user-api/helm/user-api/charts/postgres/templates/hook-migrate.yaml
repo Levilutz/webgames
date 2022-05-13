@@ -13,7 +13,11 @@ spec:
   template:
     spec:
       containers:
-        - env:
+        - args:
+            - "-m"
+            - "migrations.entrypoint"
+          command: ["python3"]
+          env:
             - name: DB_ADDRESS
               value: {{ include "postgres.dnsname" . }}
             - name: DB_NAME
@@ -33,7 +37,7 @@ spec:
                 secretKeyRef:
                   key: postgresAdminUser
                   name: {{ include "postgres.fullname" . }}
-          image: {{ printf "%s:%s" .Values.migrate.image.repository (include "postgres.tag-migrate" .) | quote }}
+          image: {{ printf "%s:%s" .Values.migrate.image.repository .Values.migrate.image.tag | quote }}
           imagePullPolicy: {{ .Values.migrate.image.pullPolicy }}
           name: main
       restartPolicy: Never
