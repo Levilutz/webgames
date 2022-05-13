@@ -1,0 +1,29 @@
+kind: Project
+name: webgames
+
+environments:
+  - name: dev
+    defaultNamespace: dev
+  - name: prod
+    defaultNamespace: prod
+    production: true
+
+providers:
+  - name: kubernetes
+    # A single kubernetes provider for all environments
+    context: vke-c95e80be-e8da-45bc-81b3-d1f7b2c2db41
+    environments:
+      - dev
+      - prod
+    buildMode: kaniko
+    kaniko:
+      namespace: null
+    # setupIngressController: nginx
+    # tlsCertificates:
+    #   - name: main
+    #     # This secret is manually created with the Cloudflare host cert
+    #     secretRef:
+    #       name: ingress-cert
+    #       namespace: default
+
+defaultEnvironment: dev
