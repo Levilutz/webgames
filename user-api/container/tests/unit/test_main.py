@@ -1,4 +1,4 @@
-from routers import main
+from user_api.routers import main
 
 
 def test_app_exists():

@@ -1,0 +1,5 @@
+kind: Module
+name: user-api-container
+type: container
+build:
+  targetImage: main

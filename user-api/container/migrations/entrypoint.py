@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 
 import psycopg
 
-from migrations.migration import BaseMigration
+from migrations.migrations.migration import BaseMigration
 
 
 async def get_db_connection() -> psycopg.AsyncConnection[Any]:
@@ -68,7 +68,9 @@ def time_from_migration_name(migration_name: str) -> int:
 def get_code_migrations() -> Dict[str, BaseMigration]:
     """Collect all migrations in folder."""
     mig_re = re.compile(r"^m_\d+_[a-zA-Z0-9\-_]+\.py$")
-    filenames = [fn for fn in os.listdir("migrations") if re.match(mig_re, fn)]
+    filenames = [
+        fn for fn in os.listdir("migrations/migrations") if re.match(mig_re, fn)
+    ]
 
     out_migrations: Dict[str, BaseMigration] = {}
     for fn in filenames:
@@ -76,7 +78,7 @@ def get_code_migrations() -> Dict[str, BaseMigration]:
         migration_name = fn[:-3]
 
         # Get the migration object
-        module = importlib.import_module(f"migrations.{migration_name}")
+        module = importlib.import_module(f"migrations.migrations.{migration_name}")
         assert hasattr(module, "Migration"), f"No Migration in file {fn}"
         migration = module.Migration()
         assert isinstance(migration, BaseMigration), f"Wrong type from file {fn}"

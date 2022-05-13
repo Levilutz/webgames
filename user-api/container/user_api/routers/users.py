@@ -1,9 +1,8 @@
 from fastapi import APIRouter
 
-from internal import users
-
-from routers import api_models
-from routers.utils import sanitize_excs
+from user_api.internal import users
+from user_api.routers import api_models
+from user_api.routers.utils import sanitize_excs
 
 
 router = APIRouter()
