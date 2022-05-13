@@ -20,7 +20,7 @@ LABEL org.opencontainers.image.authors="Levi Lutz (contact.levilutz@gmail.com)"
 
 COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
-ENV PYTHONPATH=/src:$PYTHONPATH
+ENV PYTHONPATH=$PYTHONPATH:/src
 
 COPY user_api /src/user_api
 COPY migrations /src/migrations
