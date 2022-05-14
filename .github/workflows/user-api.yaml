@@ -6,8 +6,7 @@ env:
   DOCKER_REPO: "docker.io/levilutz/webgames-user-api"
   GARDEN_LOGGER_TYPE: basic
   CI_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-  KUBECONFIG: $HOME/.kube/k_config.yaml
-  KUBE_FOLDER: $HOME/.kube
+  KUBECONFIG: /home/runner/.kube/k_config.yaml  # Hardcoding $HOME as /home/runner
 
 jobs:
   build-test-container:
@@ -25,12 +24,9 @@ jobs:
 
       - name: Validate connected
         run: |
-          echo $HOME
           echo "one"
-          ls -la $HOME/.kube
+          ls -la $KUBECONFIG
           echo "two"
-          ls -la $KUBE_FOLDER
-          echo "three"
           kubectl get pod -n webgames-dev
 
 #       - name: Build
