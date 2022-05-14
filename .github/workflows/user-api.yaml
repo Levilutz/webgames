@@ -4,9 +4,12 @@ on: push
 
 env:
   DOCKER_REPO: "docker.io/levilutz/webgames-user-api"
+  GARDEN_LOGGER_TYPE: basic
+  CI_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+  KUBECONFIG: $HOME/.kube/k_config.yaml
 
 jobs:
-  build-container:
+  build-test-container:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,102 +19,26 @@ jobs:
       - name: Install Garden
         run: curl -sL https://get.garden.io/install.sh | bash
 
-  api-lint-test:
-    runs-on: ubuntu-latest
+      - name: Connect to cluster
+        run: echo ${{ secrets.KUBE_CONFIG_FILE }} > $HOME/.kube/k_config.yaml
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Validate connected
+        run: kubectl get pod -n webgames-dev
 
-      - name: Setup Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+#       - name: Build
+#         run: garden --env=ci build user-api-container
+# 
+#       - name: Test
+#         run: garden --env=ci test user-api-container
+# 
+#   cleanup-ns:
+#     runs-on: ubuntu-latest
+#     if: always()
+#     needs:
+#       - build-test-container
+# 
+#     steps:
+#       - name: Cleanup
+#         run: kubectl delete namespace "webgames-ci-${CI_ID}"
 
-      - name: Python Installs
-        working-directory: user-api/api
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install --upgrade -r requirements.txt
-          pip3 install --upgrade -r requirements_test.txt
-
-      - name: Lint
-        working-directory: user-api/api/src
-        run: |
-          mypy . --strict
-          black --check --diff .
-          flake8 --max-line-length=88 .
-
-      - name: Unit Test
-        working-directory: user-api/api
-        run: |
-          PYTHONPATH=$PYTHONPATH:./src pytest -v tests/unit
-
-  migrations-lint-test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-
-      - name: Python Installs
-        working-directory: user-api/migrate
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install --upgrade -r requirements.txt
-          pip3 install --upgrade -r requirements_test.txt
-
-      - name: Lint
-        working-directory: user-api/migrate/src
-        run: |
-          mypy . --strict
-          black --check --diff .
-          flake8 --max-line-length=88 .
-
-      - name: Unit Test
-        working-directory: user-api/migrate
-        run: |
-          PYTHONPATH=$PYTHONPATH:./src pytest -v tests/unit
-
-  api-build-push:
-    needs: api-lint-test
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: docker build user-api/api -t api
-
-      - name: Push
-        run: |
-          docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
-          tag="${GITHUB_SHA}-api"
-          docker tag api $DOCKER_REPO:$tag
-          docker push $DOCKER_REPO:$tag
-
-  migrations-build-push:
-    needs: migrations-lint-test
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: docker build user-api/migrate -t migrations
-
-      - name: Push
-        run: |
-          docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
-          tag="${GITHUB_SHA}-migrations"
-          docker tag migrations $DOCKER_REPO:$tag
-          docker push $DOCKER_REPO:$tag
+# Don't forget namespace delete at end of workflow
