@@ -3,3 +3,16 @@ name: user-api-container
 type: container
 build:
   targetImage: main
+variables:
+  testsEnabledEnvs:
+    - dev
+    - ci
+tests:
+  - name: lint
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    command: ["bash"]
+    args: ["tests/lint.sh"]
+  - name: pytest
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    command: ["pytest"]
+    args: ["-v", "tests/unit"]

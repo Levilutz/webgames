@@ -7,6 +7,8 @@ environments:
   - name: prod
     defaultNamespace: prod
     production: true
+  - name: ci
+    defaultNamespace: ci-${local.env.CI_ID}
 
 providers:
   - name: kubernetes
@@ -15,6 +17,7 @@ providers:
     environments:
       - dev
       - prod
+      - ci
     buildMode: kaniko
     kaniko:
       namespace: null
