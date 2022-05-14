@@ -28,8 +28,11 @@ jobs:
       - name: Build
         run: $GARDEN --env=ci build user-api-container
 
-      - name: Test
-        run: $GARDEN --env=ci test user-api-container
+      - name: Lint
+        run: $GARDEN --env=ci run test user-api-container lint
+
+      - name: Unit
+        run: $GARDEN --env=ci run test user-api-container unit
 
   user-api:
     runs-on: ubuntu-latest
@@ -53,8 +56,8 @@ jobs:
       - name: Build
         run: $GARDEN --env=ci build user-api
 
-      - name: Test
-        run: $GARDEN --env=ci test user-api
+      - name: Integration
+        run: $GARDEN --env=ci run test user-api integration
 
   cleanup-ci-ns:
     runs-on: ubuntu-latest
