@@ -7,6 +7,7 @@ env:
   GARDEN_LOGGER_TYPE: basic
   CI_ID: ${{ github.run_id }}-${{ github.run_attempt }}
   KUBECONFIG: $HOME/.kube/k_config.yaml
+  KUBE_FOLDER: $HOME/.kube
 
 jobs:
   build-test-container:
@@ -23,7 +24,13 @@ jobs:
         run: mkdir $HOME/.kube && echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
 
       - name: Validate connected
-        run: kubectl get pod -n webgames-dev
+        run: |
+          echo "one"
+          ll $HOME/.kube
+          echo "two"
+          ll $KUBE_FOLDER
+          echo "three"
+          kubectl get pod -n webgames-dev
 
 #       - name: Build
 #         run: garden --env=ci build user-api-container
