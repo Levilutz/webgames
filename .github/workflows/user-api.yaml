@@ -26,7 +26,9 @@ jobs:
           kubectl auth can-i get pod
 
       - name: Build
-        run: garden --env=ci build user-api-container
+        run: |
+          echo $PATH
+          garden --env=ci build user-api-container
 
       - name: Test
         run: garden --env=ci test user-api-container
