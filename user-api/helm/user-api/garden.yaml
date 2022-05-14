@@ -13,6 +13,10 @@ dependencies:
 valueFiles:
   - values.yaml
   - values.${environment.name}.yaml
+variables:
+  testsEnabledEnvs:
+    - dev
+    - ci
 values:
   ingress:
     className: nginx-${environment.namespace}
@@ -32,3 +36,10 @@ devMode:
       target: /src/user_api
       exclude:
         - "**/__pycache__/**/*"
+tests:
+  name: integration
+  dependencies:
+    user-api
+  disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+  command: ["pytest"]
+  args: ["-v", "tests/integ"]
