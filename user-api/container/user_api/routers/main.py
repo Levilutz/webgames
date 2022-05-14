@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
@@ -32,6 +32,6 @@ async def app_startup() -> None:
 
 
 @app.get("/ping", response_class=PlainTextResponse)
-def root() -> Dict[Any, Any]:
+def root() -> str:
     """Ping pong."""
     return "pong"
