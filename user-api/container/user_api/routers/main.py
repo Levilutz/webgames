@@ -2,6 +2,7 @@ import asyncio
 from typing import Any, Dict
 
 from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse
 from psycopg.types.json import set_json_dumps, set_json_loads
 import orjson
 
@@ -30,7 +31,7 @@ async def app_startup() -> None:
     asyncio.create_task(clean_sessions_loop())
 
 
-@app.get("/")
+@app.get("/ping", response_class=PlainTextResponse)
 def root() -> Dict[Any, Any]:
-    """Root url."""
-    return {"message": "Hello World"}
+    """Ping pong."""
+    return "pong"

@@ -37,9 +37,9 @@ devMode:
       exclude:
         - "**/__pycache__/**/*"
 tests:
-  name: integration
-  dependencies:
-    user-api
-  disabled: ${!(var.testsEnabledEnvs contains environment.name)}
-  command: ["pytest"]
-  args: ["-v", "tests/integ"]
+  - name: integration
+    dependencies:
+      - user-api
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    command: ["pytest"]
+    args: ["-v", "tests/integ"]
