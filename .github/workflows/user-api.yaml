@@ -25,6 +25,7 @@ jobs:
 
       - name: Validate connected
         run: |
+          echo $HOME
           echo "one"
           ls -la $HOME/.kube
           echo "two"
