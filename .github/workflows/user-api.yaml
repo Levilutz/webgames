@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         run: |
-          echo $PATH
+          ll $HOME/.garden/bin
           garden --env=ci build user-api-container
 
       - name: Test
