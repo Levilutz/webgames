@@ -25,20 +25,20 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
           kubectl auth can-i get pod
 
-#       - name: Build
-#         run: garden --env=ci build user-api-container
-# 
-#       - name: Test
-#         run: garden --env=ci test user-api-container
-# 
-#   cleanup-ns:
-#     runs-on: ubuntu-latest
-#     if: always()
-#     needs:
-#       - build-test-container
-# 
-#     steps:
-#       - name: Cleanup
-#         run: kubectl delete namespace "webgames-ci-${CI_ID}"
+      - name: Build
+        run: garden --env=ci build user-api-container
+
+      - name: Test
+        run: garden --env=ci test user-api-container
+
+  cleanup-ns:
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - build-test-container
+
+    steps:
+      - name: Cleanup
+        run: kubectl delete namespace "webgames-ci-${CI_ID}"
 
 # Don't forget namespace delete at end of workflow
