@@ -1,16 +1,15 @@
-name: user-api
+name: main
 
 on: push
 
 env:
-  DOCKER_REPO: "docker.io/levilutz/webgames-user-api"
   GARDEN_LOGGER_TYPE: basic
   CI_ID: ${{ github.run_id }}-${{ github.run_attempt }}
   KUBECONFIG: /home/runner/.kube/k_config.yaml  # Hardcoding $HOME as /home/runner
   GARDEN: /home/runner/.garden/bin/garden
 
 jobs:
-  build-test-container:
+  user-api-container:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,11 +31,11 @@ jobs:
       - name: Test
         run: $GARDEN --env=ci test user-api-container
 
-  build-test-chart:
+  user-api:
     runs-on: ubuntu-latest
 
     needs:
-      - build-test-container
+      - user-api-container
 
     steps:
       - name: Checkout
@@ -61,8 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs:
-      - build-test-container
-      - build-test-chart
+      - user-api-container
+      - user-api
 
     steps:
       - name: Connect to cluster
