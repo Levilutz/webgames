@@ -20,14 +20,10 @@ jobs:
         run: curl -sL https://get.garden.io/install.sh | bash
 
       - name: Connect to cluster
-        run: mkdir $HOME/.kube && echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
-
-      - name: Validate connected
         run: |
-          echo "one"
-          ls -la $KUBECONFIG
-          echo "two"
-          kubectl get pod -n webgames-dev
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
 
 #       - name: Build
 #         run: garden --env=ci build user-api-container
