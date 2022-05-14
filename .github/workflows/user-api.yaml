@@ -26,9 +26,9 @@ jobs:
       - name: Validate connected
         run: |
           echo "one"
-          ll $HOME/.kube
+          ls -la $HOME/.kube
           echo "two"
-          ll $KUBE_FOLDER
+          ls -la $KUBE_FOLDER
           echo "three"
           kubectl get pod -n webgames-dev
 
