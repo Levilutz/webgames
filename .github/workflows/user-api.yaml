@@ -6,6 +6,16 @@ env:
   DOCKER_REPO: "docker.io/levilutz/webgames-user-api"
 
 jobs:
+  build-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
   api-lint-test:
     runs-on: ubuntu-latest
 
