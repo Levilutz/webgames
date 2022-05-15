@@ -16,6 +16,10 @@ class AuthLoginResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class ChangePasswordRequest(BaseModel):
+    new_password: str
+
+
 class RegisterRequest(BaseModel):
     username: str
     password: str
