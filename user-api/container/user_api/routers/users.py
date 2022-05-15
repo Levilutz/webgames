@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID4
 
-from user_api.internal import users
+from user_api.internal import auth
 from user_api.routers import api_models, dependencies
 from user_api.routers.utils import sanitize_excs
 
@@ -16,7 +16,7 @@ async def register(
 ) -> api_models.SuccessResponse:
     """Register a new user."""
     with sanitize_excs():
-        await users.register(
+        await auth.register(
             username=register_request.username,
             password=register_request.password,
         )
@@ -29,7 +29,7 @@ async def login(
 ) -> api_models.AuthLoginResponse:
     """Log a user in."""
     with sanitize_excs():
-        session = await users.login(
+        session = await auth.login(
             username=form_data.username,
             password=form_data.password,
         )
@@ -42,5 +42,5 @@ async def logout(
 ) -> api_models.SuccessResponse:
     """Log the currently authenticated user out."""
     with sanitize_excs():
-        await users.logout_by_client_token(token)
+        await auth.logout_by_client_token(token)
     return api_models.success
