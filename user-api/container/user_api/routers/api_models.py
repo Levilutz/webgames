@@ -11,6 +11,11 @@ class SuccessResponse(BaseModel):
 # Endpoint objects
 
 
+class AuthLoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
 class RegisterRequest(BaseModel):
     username: str
     password: str

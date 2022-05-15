@@ -21,7 +21,7 @@ class Session(BaseModel):
 
     async def create(self, conn: AsyncConnection) -> None:
         """Create the current session in the database."""
-        if self.find_by_id(conn, self.session_id) is not None:
+        if await self.find_by_id(conn, self.session_id) is not None:
             raise InternalError(
                 f"Cannot create Session - id {self.session_id} already exists"
             )

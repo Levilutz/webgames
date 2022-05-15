@@ -112,13 +112,23 @@ async def login(username: str, password: str) -> Session:
     return new_session
 
 
-async def logout(token_or_session_id: UUID4) -> None:
-    """Log out a session, given either client token or session id."""
+async def logout_by_session_id(session_id: UUID4) -> None:
+    """Log out a session given a client token."""
     async with await get_db_connection() as conn:
         # Find the session
-        session = await Session.find_by_id(conn, token_or_session_id)
+        session = await Session.find_by_id(conn, session_id)
         if session is None:
-            session = await Session.find_by_token(conn, token_or_session_id)
+            raise UserError("Failed to find given session")
+
+        # Delete the session
+        await session.delete(conn)
+
+
+async def logout_by_client_token(client_token: UUID4) -> None:
+    """Log out a session given a client token."""
+    async with await get_db_connection() as conn:
+        # Find the session
+        session = await Session.find_by_token(conn, client_token)
         if session is None:
             raise UserError("Failed to find given session")
 
