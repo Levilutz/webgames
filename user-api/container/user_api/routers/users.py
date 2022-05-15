@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.post("/register")
 async def register(
-    register_request: api_models.RegisterRequest,
+    register_request: api_models.AuthRequest,
 ) -> api_models.SuccessResponse:
     """Register a new user."""
     with sanitize_excs():
@@ -35,6 +35,20 @@ async def login(
             password=form_data.password,
         )
     return api_models.AuthLoginResponse(access_token=session.client_token.hex)
+
+
+@router.post("/login_json")
+async def login_json(
+    login_request: api_models.AuthRequest,
+) -> api_models.AuthLoginResponseSimple:
+    """Log a user in, just using json (non-OAuth2-compliant endpoint)."""
+    with sanitize_excs():
+        session = await auth.login(
+            # Keep explicit (no **) to avoid leaking extra params from request
+            username=login_request.username,
+            password=login_request.password,
+        )
+    return api_models.AuthLoginResponseSimple(client_token=session.client_token.hex)
 
 
 @router.post("/logout")

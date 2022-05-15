@@ -2,6 +2,7 @@ import random
 from typing import Dict, Optional
 
 from oauthlib.oauth2 import LegacyApplicationClient
+import pytest
 import requests
 from requests_oauthlib import OAuth2Session
 
@@ -39,7 +40,7 @@ def _register_random() -> Optional[Dict[str, str]]:
     return desired_user
 
 
-def _login(username: str, password: str) -> Optional[Dict[str, str]]:
+def _login_oauth2(username: str, password: str) -> Optional[Dict[str, str]]:
     """Log a user in, return Auth header if successful."""
     try:
         oauth = OAuth2Session(client=LegacyApplicationClient(client_id=""))
@@ -58,14 +59,26 @@ def _login(username: str, password: str) -> Optional[Dict[str, str]]:
         return None
 
 
-def test_register_login_logout():
+def _login_json(username: str, password: str) -> Optional[Dict[str, str]]:
+    """Log a user in, return Auth header if successful."""
+    resp = requests.post(
+        f"{BASE_URL}/login_json", json={"username": username, "password": password}
+    )
+    if resp.status_code != 200 or "client_token" not in resp.json():
+        print(f"Failed to log in, maybe expected - {resp.text}")
+        return None
+    return {"Authorization": f"Bearer {resp.json()['client_token']}"}
+
+
+@pytest.mark.parametrize("auth_method", [_login_oauth2, _login_json])
+def test_register_login_logout(auth_method):
     """Test that a new user can be registered and logged in."""
     # Register a random user
     login_data = _register_random()
     assert login_data is not None, "Failed to register"
 
     # Log the user in
-    auth_header = _login(**login_data)
+    auth_header = auth_method(**login_data)
     assert auth_header is not None, "Failed to log in"
 
     # Log the user out
@@ -77,13 +90,14 @@ def test_register_login_logout():
     assert resp.status_code != 200, "Token should be invalid"
 
 
-def test_change_password():
+@pytest.mark.parametrize("auth_method", [_login_oauth2, _login_json])
+def test_change_password(auth_method):
     """Test that a user can have their password changed."""
     login_data = _register_random()
     assert login_data is not None, "Failed to register"
 
     # Log the user in
-    auth_header = _login(**login_data)
+    auth_header = auth_method(**login_data)
     assert auth_header is not None, "Failed to log in"
 
     # Change the password
@@ -104,12 +118,12 @@ def test_change_password():
     assert resp.status_code != 200, "Token should be invalid"
 
     # Ensure old password doesn't work
-    should_fail = _login(**login_data)
+    should_fail = auth_method(**login_data)
     assert should_fail is None, "Old password worked when it shouldn't"
 
     # Ensure new password works
     login_data["password"] = new_password
-    auth_header = _login(**login_data)
+    auth_header = auth_method(**login_data)
     assert auth_header is not None, "Failed to log in with new password"
 
     # Ensure log out works
