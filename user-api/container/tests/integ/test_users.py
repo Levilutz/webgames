@@ -129,3 +129,26 @@ def test_change_password(auth_method):
     # Ensure log out works
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
     _assert_good_resp(resp)
+
+
+@pytest.mark.parametrize("auth_method", [_login_oauth2, _login_json])
+def test_delete_user(auth_method):
+    """Test that a user can be deleted."""
+    login_data = _register_random()
+    assert login_data is not None, "Failed to register"
+
+    # Log the user in
+    auth_header = auth_method(**login_data)
+    assert auth_header is not None, "Failed to log in"
+
+    # Delete the user
+    resp = requests.post(f"{BASE_URL}/delete", headers=auth_header)
+    _assert_good_resp(resp)
+
+    # Ensure log out fails
+    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    assert resp.status_code != 200, "Session shouldn't exist after user delete"
+
+    # Ensure re-login fails
+    auth_header = auth_method(**login_data)
+    assert auth_header is None, "Logged in to deleted user - uh oh"

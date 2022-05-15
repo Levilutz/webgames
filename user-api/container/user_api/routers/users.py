@@ -70,3 +70,13 @@ async def change_password(
     with sanitize_excs():
         await auth.change_password(user.user_id, change_password_request.new_password)
     return api_models.success
+
+
+@router.post("/delete")
+async def delete_user(
+    user: User = Depends(dependencies.get_user),
+) -> api_models.SuccessResponse:
+    """Delete a user account."""
+    with sanitize_excs():
+        await auth.delete(user.user_id)
+    return api_models.success

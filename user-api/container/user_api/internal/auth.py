@@ -136,12 +136,12 @@ async def logout_by_client_token(client_token: UUID4) -> None:
         await session.delete(conn)
 
 
-async def delete(username: str) -> None:
+async def delete(user_id: UUID4) -> None:
     """Delete a user account."""
 
     async with await get_db_connection() as conn:
         # Get the user
-        user = await User.check_by_username(conn, username)
+        user = await User.check_by_id(conn, user_id)
 
         # Delete the user
         await user.delete(conn)
