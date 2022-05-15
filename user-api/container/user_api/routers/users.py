@@ -28,10 +28,11 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> api_models.AuthLoginResponse:
     """Log a user in."""
-    session = await users.login(
-        username=form_data.username,
-        password=form_data.password,
-    )
+    with sanitize_excs():
+        session = await users.login(
+            username=form_data.username,
+            password=form_data.password,
+        )
     return api_models.AuthLoginResponse(access_token=session.client_token.hex)
 
 
@@ -40,5 +41,6 @@ async def logout(
     token: UUID4 = Depends(dependencies.get_token),
 ) -> api_models.SuccessResponse:
     """Log the currently authenticated user out."""
-    await users.logout_by_client_token(token)
+    with sanitize_excs():
+        await users.logout_by_client_token(token)
     return api_models.success

@@ -1,7 +1,6 @@
 import requests
 
-
-BASE_URL = "http://user-api"
+from .config import BASE_URL
 
 
 def test_ping():

@@ -41,5 +41,7 @@ tests:
     dependencies:
       - user-api
     disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    env:
+      BASE_URL: "http://user-api"
     command: ["pytest"]
     args: ["-v", "tests/integ"]

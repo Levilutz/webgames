@@ -11,6 +11,10 @@ mypy migrations --strict || tmp=$?
 black --check --diff migrations || tmp=$?
 flake8 --max-line-length=88 migrations || tmp=$?
 
+# No mypy for tests (gets messy with patching / mocking sometimes)
+black --check --diff tests || tmp=$?
+flake8 --max-line-length=88 tests || tmp=$?
+
 if [ $tmp -ne 0 ]
 then
     echo "Something failed"
