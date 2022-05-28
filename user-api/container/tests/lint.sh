@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
 # Expects to be run from code root (.../container in repo, /src in container)
 
-tmp=0
+set -e
 
-mypy user_api --strict || tmp=$?
-black --check --diff user_api || tmp=$?
-flake8 --max-line-length=88 user_api || tmp=$?
+mypy user_api --strict
+black --check --diff user_api
+flake8 --max-line-length=88 user_api
 
-mypy migrations --strict || tmp=$?
-black --check --diff migrations || tmp=$?
-flake8 --max-line-length=88 migrations || tmp=$?
+mypy migrations --strict
+black --check --diff migrations
+flake8 --max-line-length=88 migrations
 
 # No mypy for tests (gets messy with patching / mocking sometimes)
-black --check --diff tests || tmp=$?
-flake8 --max-line-length=88 tests || tmp=$?
+black --check --diff tests
+flake8 --max-line-length=88 tests
 
-if [ $tmp -ne 0 ]
-then
-    echo "Something failed"
-    exit $tmp
-fi
+# git ls-files | grep -P ".*\.sh$" | xargs shellcheck
+# shellcheck disable=SC2038
+find /src -iname "*.sh" | xargs shellcheck
+echo "Shellcheck successful"

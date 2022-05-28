@@ -1,5 +1,14 @@
-# Base image and shared variables
+# Base image builder
+FROM python:3.9-slim as base-builder
+
+RUN apt-get update -y
+RUN apt-get install -y shellcheck
+
+
+# Base image
 FROM python:3.9-slim as base
+
+COPY --from=base-builder /usr/bin/shellcheck /usr/bin/shellcheck
 
 
 # Builder image
@@ -25,6 +34,7 @@ ENV PYTHONPATH=$PYTHONPATH:/src
 COPY user_api /src/user_api
 COPY migrations /src/migrations
 COPY tests /src/tests
+COPY create_migration.sh src/create_migration.sh
 
 WORKDIR /src
 CMD ["echo", "No cmd provided"]
