@@ -1,6 +1,6 @@
 # ingress-controller
 
-This is just a garden helm module / service deploying the standard [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx) helm chart, with values files for each relevant env. It's simple purpose is to enable ingress-controller variation across various deployment environments. 
+This is just a garden helm module / service deploying the standard [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx) helm chart, with values files for each relevant env. Its simple purpose is to enable ingress-controller variation across various deployment environments. 
 
 This enforces a single notable deviation from the 'standard' way to manage ingress controllers: there's an instance of ingress-nginx in every deployment environment that wants one, deployed in the same namespace as the pods it's routing to. Given the cost-saving measure of every-deployment-environment-in-one-cluster, this means there could be any number of ingress-nginx instances running in the same cluster.
 
