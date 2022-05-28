@@ -16,12 +16,12 @@ These services should have a few things in common:
 * Built to OCI images with either Docker or Buildah
 * Deployable to a Kubernetes cluster
 * Packaged with Helm
-* Runnable with Skaffold
+* CI/CD managed with Garden
 * For consistency, attaches ingress to `https://<domain>/<game name>` and/or `https://<domain>/api/<game name>`
 
 Besides that, each of these is services is meant to be an independent playground for varying languages, technologies, and design patterns.
 
-Ideally, general and deployment-specific code should be partitioned enough that it's easy to deploy each service on an arbitrary cluster / cloud provider / domain without significant work.
+Ideally, general and deployment-specific code should be partitioned enough that it's easy to deploy each service on an arbitrary cluster / cloud provider / domain without significant work. Garden has many features which can easily enable movement towards this goal.
 
 
 ## TODO
