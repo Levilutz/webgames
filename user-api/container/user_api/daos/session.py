@@ -7,7 +7,7 @@ from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
 from user_api.daos.database import AsyncConnection
-from user_api.exceptions import InternalError
+from user_api.exceptions import InternalError  # You shouldn't use UserErrors here
 
 
 SESSION_TTL_HOURS = 12

@@ -12,12 +12,13 @@ def sanitize_excs(*args: List[Any], **kwargs: Dict[Any, Any]) -> Iterator[None]:
     try:
         yield
     except InternalError as e:
-        print(f"INTERNAL ERROR: {str(e)}")  # TODO make this a log
+        print(f"INTERNAL ERROR: {str(e)}")  # TODO make this a log error
         raise HTTPException(status_code=500, detail="Internal server error")
     except UserError as e:
+        print(f"USER ERROR: {str(e)}")  # TODO make this a log debug
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        print(f"UNHANDLED ERROR: {str(e)}")  # TODO make this a log
+        print(f"UNHANDLED ERROR: {str(e)}")  # TODO make this a log error
         raise HTTPException(status_code=500, detail="Internal server error")
     finally:
         pass

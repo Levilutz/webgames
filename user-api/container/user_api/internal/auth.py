@@ -8,7 +8,7 @@ import bcrypt
 from pydantic import UUID4
 
 from user_api.daos import Session, User, get_db_connection
-from user_api.exceptions import UserError
+from user_api.exceptions import UserError  # You shouldn't use InternalErrors here
 
 
 legal_username_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\\-_\\.]{2,32}$")
@@ -92,7 +92,10 @@ async def login(username: str, password: str) -> Session:
 
     async with await get_db_connection() as conn:
         # Get the associated user
-        user = await User.check_by_username(conn, username)
+        user = await User.find_by_username(conn, username)
+
+        if user is None:
+            raise UserError("Invalid username or password")
 
         # Validate the password
         if not _password_verify(password, user.password_hash):
