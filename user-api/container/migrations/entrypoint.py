@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 
 import psycopg
 
-from migrations.migrations.migration import BaseMigration
+from migrations.migration import BaseMigration
 
 
 async def get_db_connection() -> psycopg.AsyncConnection[Any]:

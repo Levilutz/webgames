@@ -4,7 +4,7 @@ from typing import Any
 
 from psycopg import AsyncConnection
 
-from .migration import BaseMigration
+from migrations.migration import BaseMigration
 
 
 class Migration(BaseMigration):
