@@ -36,6 +36,7 @@ devMode:
       target: /src/user_api
       exclude:
         - "**/__pycache__/**/*"
+      mode: one-way-replica
 tests:
   - name: integration
     dependencies:
