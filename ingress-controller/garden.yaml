@@ -1,0 +1,28 @@
+kind: Module
+name: ingress-nginx
+type: helm
+repo: https://kubernetes.github.io/ingress-nginx
+chart: ingress-nginx
+releaseName: ingress-nginx-${environment.namespace}
+version: "4.1.1"
+variables:
+  enabledEnvs:
+    - prod
+    - dev
+valueFiles:
+  - values.yaml
+  - values.${environment.name}.yaml
+values:
+  controller:
+    ingressClass: nginx-${environment.namespace}
+    ingressClassResource:
+      name: nginx-${environment.namespace}
+      enabled: true
+      default: false
+      controllerValue: k8s.io/ingress-nginx-${environment.namespace}
+disabled: ${!(var.enabledEnvs contains environment.name)}
+portForwards:
+  - name: ingress-nginx
+    resource: service/ingress-nginx-${environment.namespace}-controller
+    targetPort: 80
+    localPort: 8008

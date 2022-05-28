@@ -1,0 +1,21 @@
+global:
+  tagBaseOverride:
+
+image:
+  pullPolicy: Always
+  repository: docker.io/levilutz/webgames-user-api
+  # If tag is set, it's used
+  # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
+  tag:
+  tagBase:
+  tagContainer: api
+
+replicas: 1
+
+ingress:
+  enabled: false
+  host:
+  prefix:
+  tls:
+    enabled: false
+    secretName:

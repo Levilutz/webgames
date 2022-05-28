@@ -1,0 +1,44 @@
+{{- if .Values.migrate.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  labels:
+    {{- include "postgres.labels" . | nindent 4 }}
+  name: {{ include "postgres.fullname-migrate" . }}
+spec:
+  template:
+    spec:
+      containers:
+        - args:
+            - "-m"
+            - "migrations.entrypoint"
+          command: ["python3"]
+          env:
+            - name: DB_ADDRESS
+              value: {{ include "postgres.dnsname" . }}
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: postgresDbName
+                  name: {{ include "postgres.fullname" . }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: postgresAdminPassword
+                  name: {{ include "postgres.fullname" . }}
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: postgresAdminUser
+                  name: {{ include "postgres.fullname" . }}
+          image: {{ printf "%s:%s" .Values.migrate.image.repository .Values.migrate.image.tag | quote }}
+          imagePullPolicy: {{ .Values.migrate.image.pullPolicy }}
+          name: main
+      restartPolicy: Never
+{{- end }}

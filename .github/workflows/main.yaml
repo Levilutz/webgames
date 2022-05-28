@@ -1,0 +1,103 @@
+name: main
+
+on: push
+
+env:
+  GARDEN_LOGGER_TYPE: basic
+  CI_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+  KUBECONFIG: /home/runner/.kube/k_config.yaml  # Hardcoding $HOME as /home/runner
+  GARDEN: /home/runner/.garden/bin/garden
+
+jobs:
+  user-api-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Build
+        run: $GARDEN --env=ci build user-api-container
+
+      - name: Lint
+        run: $GARDEN --env=ci run test user-api-container lint
+
+      - name: Unit
+        run: $GARDEN --env=ci run test user-api-container unit
+
+  user-api:
+    runs-on: ubuntu-latest
+
+    needs:
+      - user-api-container
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Build
+        run: $GARDEN --env=ci build user-api
+
+      - name: Integration
+        run: $GARDEN --env=ci run test user-api integration
+
+  cleanup-ci-ns:
+    runs-on: ubuntu-latest
+
+    if: always()
+
+    needs:
+      - user-api-container
+      - user-api
+
+    steps:
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Cleanup
+        run: kubectl delete namespace "webgames-ci-${CI_ID}"
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    needs:
+      - cleanup-ci-ns
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Deploy
+        run: $GARDEN --env=prod deploy --yes

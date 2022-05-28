@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  {{- if .Values.ingress.prefix }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  {{- end }}
+  labels:
+    {{- include "user-api.labels" . | nindent 4 }}
+  name: {{ include "user-api.fullname" . }}
+spec:
+  ingressClassName: {{ default "nginx" .Values.ingress.className | quote }}
+  rules:
+    - # Only use host if ingress controller has a loadbalancer
+      {{- if .Values.ingress.host }}
+      host: {{ .Values.ingress.host | quote }}
+      {{- end }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ include "user-api.fullname" . }}
+                port:
+                  number: 80
+            {{- if .Values.ingress.prefix }}
+            path: {{ printf "%s(/|$)(.*)" .Values.ingress.prefix }}
+            pathType: Prefix
+            {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+{{- end }}

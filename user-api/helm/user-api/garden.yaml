@@ -1,0 +1,48 @@
+kind: Module
+name: user-api
+type: helm
+serviceResource:
+  kind: Deployment
+  name: '{{ include "user-api.fullname" . }}'
+  containerModule: user-api-container
+build:
+  dependencies:
+    - user-api-container
+dependencies:
+  - ingress-nginx  # ingress-nginx self-disables when necessary
+valueFiles:
+  - values.yaml
+  - values.${environment.name}.yaml
+variables:
+  testsEnabledEnvs:
+    - dev
+    - ci
+values:
+  ingress:
+    className: nginx-${environment.namespace}
+  image:
+    repository: ${modules.user-api-container.outputs.deployment-image-name}
+    tag: ${modules.user-api-container.version}
+  postgres:
+    migrate:
+      image:
+        repository: ${modules.user-api-container.outputs.deployment-image-name}
+        tag: ${modules.user-api-container.version}
+devMode:
+  command: ["uvicorn"]
+  args: ["--port=80", "--host=0.0.0.0", "--reload", "user_api.routers.main:app"]
+  sync:
+    - source: user_api
+      target: /src/user_api
+      exclude:
+        - "**/__pycache__/**/*"
+      mode: one-way-replica
+tests:
+  - name: integration
+    dependencies:
+      - user-api
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    env:
+      BASE_URL: "http://user-api"
+    command: ["pytest"]
+    args: ["-v", "tests/integ"]
