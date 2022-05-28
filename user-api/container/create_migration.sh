@@ -15,6 +15,6 @@ c_time=$(date +"%s")
 filename="m_${c_time}_$1.py"
 echo "Creating migration $filename"
 
-cp user-api/migrate/src/migrations/template.py "user-api/migrate/src/migrations/$filename"
+cp user-api/container/migrations/migrations/template.py "user-api/container/migrations/migrations/$filename"
 
 echo "Done"
