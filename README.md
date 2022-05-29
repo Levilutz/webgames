@@ -18,7 +18,7 @@ These services should have a few things in common:
 * Packaged with Helm
 * CI/CD managed with Garden
 * For consistency, attaches ingress to `https://<domain>/<game name>` and/or `https://<domain>/api/<game name>`
-    * APIs that don't expose on prod can expose on `https://<domain>/dev/api/<game name>` in development environments for developer convenience. These ingresses should _definitely_ be disabled in prod environments, and services should never route to these URLs.
+    * APIs that don't expose on prod can expose on `https://<domain>/dev/<service name>` in development environments for developer convenience. These ingresses should _definitely_ be disabled in prod environments, and services should never route to these URLs.
 
 Besides that, each of these is services is meant to be an independent playground for varying languages, technologies, and design patterns.
 

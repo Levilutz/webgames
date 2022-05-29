@@ -1,6 +1,7 @@
 import os
 
-default_base_path = "http://localhost:8008/api/users"  # For local runs on port-forward
+# Default for local runs on port-forward
+default_base_path = "http://localhost:8008/dev/user-api"
 BASE_URL = os.getenv("BASE_URL", default=default_base_path)
 
 # Set insecure transport if necessary for oauthlib to shut up
