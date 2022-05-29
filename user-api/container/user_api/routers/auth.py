@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Response, status
 from pydantic import UUID4
 
-from user_api.daos import User
 from user_api.internal import auth
-from user_api.routers import api_models, dependencies
+from user_api.routers import api_models
 from user_api.routers.utils import sanitize_excs
 
 
@@ -23,6 +22,17 @@ async def user_create(
             username=username,
             password=user_create_request.password,
         )
+    return success
+
+
+@router.put("/users/{username}")
+async def user_update(
+    username: str,
+    user_update_request: api_models.UserUpdateRequest,
+) -> Response:
+    """Change a authenticated user's password."""
+    with sanitize_excs():
+        await auth.change_password(username, user_update_request.password)
     return success
 
 
@@ -53,15 +63,4 @@ async def token_delete(client_token: UUID4) -> Response:
     """Log the currently authenticated user out."""
     with sanitize_excs():
         await auth.logout_by_client_token(client_token)
-    return success
-
-
-@router.post("/change_password")
-async def change_password(
-    change_password_request: api_models.ChangePasswordRequest,
-    user: User = Depends(dependencies.get_user),
-) -> Response:
-    """Change a authenticated user's password."""
-    with sanitize_excs():
-        await auth.change_password(user.user_id, change_password_request.new_password)
     return success

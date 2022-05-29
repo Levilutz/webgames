@@ -5,16 +5,11 @@ class AuthLoginResponse(BaseModel):
     client_token: str
 
 
-class ChangePasswordRequest(BaseModel):
-    new_password: str
-
-
-class AuthRequest(BaseModel):
-    username: str
+class UserCreateRequest(BaseModel):
     password: str
 
 
-class UserCreateRequest(BaseModel):
+class UserUpdateRequest(BaseModel):
     password: str
 
 

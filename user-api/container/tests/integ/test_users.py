@@ -35,7 +35,7 @@ def _register_random() -> Optional[Tuple[str, str]]:
 
 
 def _login_json(username: str, password: str) -> Optional[Dict[str, str]]:
-    """Log a user in, return Auth header if successful."""
+    """Log a user in, return client token if successful."""
     resp = requests.post(
         f"{BASE_URL}/users/{username}/login", json={"password": password}
     )
@@ -74,14 +74,12 @@ def test_change_password():
     # Log the user in
     client_token = _login_json(username, password)
     assert client_token is not None, "Failed to log in"
-    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Change the password
     new_password = _random_alphanum()
-    resp = requests.post(
-        f"{BASE_URL}/change_password",
-        headers=auth_header,
-        json={"new_password": new_password},
+    resp = requests.put(
+        f"{BASE_URL}/users/{username}",
+        json={"password": new_password},
     )
     _assert_good_resp(resp)
 
@@ -100,7 +98,6 @@ def test_change_password():
     # Ensure new password works
     client_token = _login_json(username, new_password)
     assert client_token is not None, "Failed to log in with new password"
-    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Ensure log out works
     resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")

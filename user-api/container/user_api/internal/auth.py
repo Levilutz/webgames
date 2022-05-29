@@ -67,7 +67,7 @@ async def register(username: str, password: str) -> User:
     return new_user
 
 
-async def change_password(user_id: UUID4, new_password: str) -> None:
+async def change_password(username: str, new_password: str) -> None:
     """Change a user's password."""
 
     # Check new password is legal
@@ -76,7 +76,7 @@ async def change_password(user_id: UUID4, new_password: str) -> None:
 
     async with await get_db_connection() as conn:
         # Find the user
-        user = await User.check_by_id(conn, user_id)
+        user = await User.check_by_username(conn, username)
 
         # Update the user's password
         await user.update_password_hash(conn, _password_hash(new_password))
