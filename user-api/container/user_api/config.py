@@ -39,3 +39,8 @@ def _get_env_cast(name: str, cast: Type[T]) -> T:
 
 
 EXPECTED_PREFIX = _get_env("EXPECTED_PREFIX") or ""
+DB_USER = _get_env("DB_USER", required=True)
+DB_PASS = _get_env("DB_PASS", required=True)
+DB_ADDRESS = _get_env("DB_ADDRESS", required=True)
+DB_PORT = _get_env("DB_PORT", required=True)
+DB_NAME = _get_env("DB_NAME", required=True)
