@@ -44,18 +44,28 @@ async def user_delete(username: str) -> Response:
     return success
 
 
+# This is essentially the token create endpoint, it just has specific requirements
 @router.post("/users/{username}/login")
 async def user_login(
     username: str,
     user_login_request: api_models.UserLoginRequest,
 ) -> api_models.AuthLoginResponse:
-    """Log a user in, just using json (non-OAuth2-compliant endpoint)."""
+    """Log a user in."""
     with sanitize_excs():
         session = await auth.login(
             username=username,
             password=user_login_request.password,
         )
     return api_models.AuthLoginResponse(client_token=session.client_token.hex)
+
+
+@router.get("/tokens/{client_token}")
+async def token_get(client_token: UUID4) -> api_models.TokenGetResponse:
+    """Get data for a given token."""
+    with sanitize_excs():
+        user = await auth.find_by_token(client_token)
+        assert user is not None
+    return api_models.TokenGetResponse(username=user.username)
 
 
 @router.delete("/tokens/{client_token}")

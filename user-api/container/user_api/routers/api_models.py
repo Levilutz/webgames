@@ -15,3 +15,7 @@ class UserUpdateRequest(BaseModel):
 
 class UserLoginRequest(BaseModel):
     password: str
+
+
+class TokenGetResponse(BaseModel):
+    username: str

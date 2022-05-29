@@ -125,3 +125,19 @@ def test_delete_user():
     # Ensure re-login fails
     client_token = _login_json(username, password)
     assert client_token is None, "Logged in to deleted user - uh oh"
+
+
+def test_get_token():
+    """Test that a token's associated user can be found."""
+    login_data = _register_random()
+    assert login_data is not None, "Failed to register"
+    username, password = login_data
+
+    # Log the user in
+    client_token = _login_json(username, password)
+    assert client_token is not None, "Failed to log in"
+
+    # Get the token's associated username
+    resp = requests.get(f"{BASE_URL}/tokens/{client_token}")
+    assert resp.status_code == 200, "Failed to find username for token"
+    assert resp.json()["username"] == username
