@@ -5,4 +5,4 @@ postgres:
 
 ingress:
   enabled: true
-  prefix: /api/users
+  prefix: /dev/api/users
