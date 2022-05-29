@@ -2,9 +2,9 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import UUID4
 
-from user_api import config
-from user_api.daos import User
-from user_api.internal import auth
+from user_api_internal import config
+from user_api_internal.daos import User
+from user_api_internal.internal import auth
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{config.EXPECTED_PREFIX}/login")

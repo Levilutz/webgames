@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID4
 
-from user_api.daos import User
-from user_api.internal import auth
-from user_api.routers import api_models, dependencies
-from user_api.routers.utils import sanitize_excs
+from user_api_internal.daos import User
+from user_api_internal.internal import auth
+from user_api_internal.routers import api_models, dependencies
+from user_api_internal.routers.utils import sanitize_excs
 
 
 router = APIRouter()

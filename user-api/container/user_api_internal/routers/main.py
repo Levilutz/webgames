@@ -6,9 +6,9 @@ from fastapi.responses import PlainTextResponse
 from psycopg.types.json import set_json_dumps, set_json_loads
 import orjson
 
-from user_api import config
-from user_api.internal.auth import clean_sessions_loop
-from user_api.routers import auth
+from user_api_internal import config
+from user_api_internal.internal.auth import clean_sessions_loop
+from user_api_internal.routers import auth
 
 
 app = FastAPI(root_path=config.EXPECTED_PREFIX)

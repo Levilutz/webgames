@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterator, List
 
 from fastapi import HTTPException
 
-from user_api.exceptions import InternalError, UserError
+from user_api_internal.exceptions import InternalError, UserError
 
 
 @contextmanager
