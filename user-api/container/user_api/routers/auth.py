@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID4
 
@@ -10,18 +10,20 @@ from user_api.routers.utils import sanitize_excs
 
 router = APIRouter()
 
+success = Response(status_code=status.HTTP_200_OK)
+
 
 @router.post("/register")
 async def register(
     register_request: api_models.AuthRequest,
-) -> api_models.SuccessResponse:
+) -> Response:
     """Register a new user."""
     with sanitize_excs():
         await auth.register(
             username=register_request.username,
             password=register_request.password,
         )
-    return api_models.success
+    return success
 
 
 @router.post("/login")
@@ -54,29 +56,29 @@ async def login_json(
 @router.post("/logout")
 async def logout(
     token: UUID4 = Depends(dependencies.get_token),
-) -> api_models.SuccessResponse:
+) -> Response:
     """Log the currently authenticated user out."""
     with sanitize_excs():
         await auth.logout_by_client_token(token)
-    return api_models.success
+    return success
 
 
 @router.post("/change_password")
 async def change_password(
     change_password_request: api_models.ChangePasswordRequest,
     user: User = Depends(dependencies.get_user),
-) -> api_models.SuccessResponse:
+) -> Response:
     """Change a authenticated user's password."""
     with sanitize_excs():
         await auth.change_password(user.user_id, change_password_request.new_password)
-    return api_models.success
+    return success
 
 
 @router.post("/delete")
 async def delete_user(
     user: User = Depends(dependencies.get_user),
-) -> api_models.SuccessResponse:
+) -> Response:
     """Delete a user account."""
     with sanitize_excs():
         await auth.delete(user.user_id)
-    return api_models.success
+    return success

@@ -9,13 +9,10 @@ from requests_oauthlib import OAuth2Session
 from .config import BASE_URL
 
 
-expected_success = {"success": True}
-
-
 def _assert_good_resp(resp):
     """Assert a response is good."""
     assert resp.status_code == 200, resp.text
-    assert resp.json() == expected_success, resp.text
+    assert not resp.text
 
 
 def _random_alphanum(length=16) -> str:
@@ -34,7 +31,7 @@ def _register_random() -> Optional[Dict[str, str]]:
 
     # Register the user
     resp = requests.post(f"{BASE_URL}/register", json=desired_user)
-    if resp.status_code != 200 or resp.json() != expected_success:
+    if resp.status_code != 200:
         print(f"Failed to register, maybe expected - {resp.text}")
 
     return desired_user
