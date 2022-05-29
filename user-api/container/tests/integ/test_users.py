@@ -141,7 +141,7 @@ def test_delete_user(auth_method):
     assert auth_header is not None, "Failed to log in"
 
     # Delete the user
-    resp = requests.post(f"{BASE_URL}/delete", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/users/{username}")
     _assert_good_resp(resp)
 
     # Ensure log out fails

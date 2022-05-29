@@ -27,6 +27,14 @@ async def user_create(
     return success
 
 
+@router.delete("/users/{username}")
+async def user_delete(username: str) -> Response:
+    """Delete a user account."""
+    with sanitize_excs():
+        await auth.delete(username)
+    return success
+
+
 @router.post("/login")
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -72,14 +80,4 @@ async def change_password(
     """Change a authenticated user's password."""
     with sanitize_excs():
         await auth.change_password(user.user_id, change_password_request.new_password)
-    return success
-
-
-@router.post("/delete")
-async def delete_user(
-    user: User = Depends(dependencies.get_user),
-) -> Response:
-    """Delete a user account."""
-    with sanitize_excs():
-        await auth.delete(user.user_id)
     return success
