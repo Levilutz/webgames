@@ -2,11 +2,6 @@ from pydantic import BaseModel
 
 
 class AuthLoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-
-
-class AuthLoginResponseSimple(BaseModel):
     client_token: str
 
 
@@ -20,4 +15,8 @@ class AuthRequest(BaseModel):
 
 
 class UserCreateRequest(BaseModel):
+    password: str
+
+
+class UserLoginRequest(BaseModel):
     password: str

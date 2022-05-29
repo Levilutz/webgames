@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Response, status
-from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID4
 
 from user_api.daos import User
@@ -35,31 +34,18 @@ async def user_delete(username: str) -> Response:
     return success
 
 
-@router.post("/login")
+@router.post("/users/{username}/login")
 async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    username: str,
+    user_login_request: api_models.UserLoginRequest,
 ) -> api_models.AuthLoginResponse:
-    """Log a user in."""
-    with sanitize_excs():
-        session = await auth.login(
-            username=form_data.username,
-            password=form_data.password,
-        )
-    return api_models.AuthLoginResponse(access_token=session.client_token.hex)
-
-
-@router.post("/login_json")
-async def login_json(
-    login_request: api_models.AuthRequest,
-) -> api_models.AuthLoginResponseSimple:
     """Log a user in, just using json (non-OAuth2-compliant endpoint)."""
     with sanitize_excs():
         session = await auth.login(
-            # Keep explicit (no **) to avoid leaking extra params from request
-            username=login_request.username,
-            password=login_request.password,
+            username=username,
+            password=user_login_request.password,
         )
-    return api_models.AuthLoginResponseSimple(client_token=session.client_token.hex)
+    return api_models.AuthLoginResponse(client_token=session.client_token.hex)
 
 
 @router.post("/logout")
