@@ -59,6 +59,57 @@ jobs:
       - name: Integration
         run: $GARDEN --env=ci run test user-api integration
 
+  auth-api-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Build
+        run: $GARDEN --env=ci build auth-api-container
+
+      - name: Lint
+        run: $GARDEN --env=ci run test auth-api-container lint
+
+      - name: Unit
+        run: $GARDEN --env=ci run test auth-api-container unit
+
+  auth-api:
+    runs-on: ubuntu-latest
+
+    needs:
+      - auth-api-container
+      - user-api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Build
+        run: $GARDEN --env=ci build auth-api
+
+      - name: Integration
+        run: $GARDEN --env=ci run test auth-api integration
+
   cleanup-ci-ns:
     runs-on: ubuntu-latest
 
@@ -67,6 +118,8 @@ jobs:
     needs:
       - user-api-container
       - user-api
+      - auth-api-container
+      - auth-api
 
     steps:
       - name: Connect to cluster
