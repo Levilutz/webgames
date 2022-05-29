@@ -17,5 +17,5 @@ flake8 --max-line-length=88 tests
 
 # git ls-files | grep -P ".*\.sh$" | xargs shellcheck
 # shellcheck disable=SC2038
-find /src -iname "*.sh" | xargs shellcheck
+find . -iname "*.sh" | xargs shellcheck
 echo "Shellcheck successful"
