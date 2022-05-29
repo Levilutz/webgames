@@ -55,14 +55,13 @@ def test_register_login_logout():
     # Log the user in
     client_token = _login_json(username, password)
     assert client_token is not None, "Failed to log in"
-    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Log the user out
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     _assert_good_resp(resp)
 
     # Ensure the user is still logged out
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     assert resp.status_code != 200, "Token should be invalid"
 
 
@@ -87,11 +86,11 @@ def test_change_password():
     _assert_good_resp(resp)
 
     # Log the user out
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     _assert_good_resp(resp)
 
     # Ensure the user is still logged out
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     assert resp.status_code != 200, "Token should be invalid"
 
     # Ensure old password doesn't work
@@ -104,7 +103,7 @@ def test_change_password():
     auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Ensure log out works
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     _assert_good_resp(resp)
 
 
@@ -117,14 +116,13 @@ def test_delete_user():
     # Log the user in
     client_token = _login_json(username, password)
     assert client_token is not None, "Failed to log in"
-    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Delete the user
     resp = requests.delete(f"{BASE_URL}/users/{username}")
     _assert_good_resp(resp)
 
     # Ensure log out fails
-    resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
+    resp = requests.delete(f"{BASE_URL}/tokens/{client_token}")
     assert resp.status_code != 200, "Session shouldn't exist after user delete"
 
     # Ensure re-login fails

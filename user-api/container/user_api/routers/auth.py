@@ -35,7 +35,7 @@ async def user_delete(username: str) -> Response:
 
 
 @router.post("/users/{username}/login")
-async def login(
+async def user_login(
     username: str,
     user_login_request: api_models.UserLoginRequest,
 ) -> api_models.AuthLoginResponse:
@@ -48,13 +48,11 @@ async def login(
     return api_models.AuthLoginResponse(client_token=session.client_token.hex)
 
 
-@router.post("/logout")
-async def logout(
-    token: UUID4 = Depends(dependencies.get_token),
-) -> Response:
+@router.delete("/tokens/{client_token}")
+async def token_delete(client_token: UUID4) -> Response:
     """Log the currently authenticated user out."""
     with sanitize_excs():
-        await auth.logout_by_client_token(token)
+        await auth.logout_by_client_token(client_token)
     return success
 
 
