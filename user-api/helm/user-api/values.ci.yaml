@@ -1,4 +1,0 @@
-postgres:
-  pvc:
-    size: 10Gi
-    storageClass: vultr-block-storage
