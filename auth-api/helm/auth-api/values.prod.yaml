@@ -1,0 +1,7 @@
+ingress:
+  enabled: true
+  host: games.levilutz.com
+  prefix: /api/auth
+  tls:
+    enabled: true
+    secretName: ingress-cert

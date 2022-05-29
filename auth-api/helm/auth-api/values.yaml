@@ -1,0 +1,16 @@
+image:
+  pullPolicy: Always
+  repository:
+  tag:
+
+replicas: 1
+
+userApiUrl:
+
+ingress:
+  enabled: false
+  host:
+  prefix:
+  tls:
+    enabled: false
+    secretName:
