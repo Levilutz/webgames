@@ -1,5 +1,5 @@
 import random
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from oauthlib.oauth2 import LegacyApplicationClient
 import pytest
@@ -21,20 +21,20 @@ def _random_alphanum(length=16) -> str:
     return "".join(random.choice(chars) for i in range(length))
 
 
-def _register_random() -> Optional[Dict[str, str]]:
+def _register_random() -> Optional[Tuple[str, str]]:
     """Register a random user, return username and password if successful."""
     # Generate a user we want
-    desired_user = {
-        "username": _random_alphanum(),
-        "password": _random_alphanum(),
-    }
+    username = _random_alphanum()
+    password = _random_alphanum()
 
     # Register the user
-    resp = requests.post(f"{BASE_URL}/register", json=desired_user)
+    body = {"password": password}
+    resp = requests.post(f"{BASE_URL}/users/{username}/create", json=body)
     if resp.status_code != 200:
         print(f"Failed to register, maybe expected - {resp.text}")
+        return None
 
-    return desired_user
+    return username, password
 
 
 def _login_oauth2(username: str, password: str) -> Optional[Dict[str, str]]:
@@ -73,9 +73,10 @@ def test_register_login_logout(auth_method):
     # Register a random user
     login_data = _register_random()
     assert login_data is not None, "Failed to register"
+    username, password = login_data
 
     # Log the user in
-    auth_header = auth_method(**login_data)
+    auth_header = auth_method(username, password)
     assert auth_header is not None, "Failed to log in"
 
     # Log the user out
@@ -92,9 +93,10 @@ def test_change_password(auth_method):
     """Test that a user can have their password changed."""
     login_data = _register_random()
     assert login_data is not None, "Failed to register"
+    username, password = login_data
 
     # Log the user in
-    auth_header = auth_method(**login_data)
+    auth_header = auth_method(username, password)
     assert auth_header is not None, "Failed to log in"
 
     # Change the password
@@ -115,12 +117,11 @@ def test_change_password(auth_method):
     assert resp.status_code != 200, "Token should be invalid"
 
     # Ensure old password doesn't work
-    should_fail = auth_method(**login_data)
+    should_fail = auth_method(username, password)
     assert should_fail is None, "Old password worked when it shouldn't"
 
     # Ensure new password works
-    login_data["password"] = new_password
-    auth_header = auth_method(**login_data)
+    auth_header = auth_method(username, new_password)
     assert auth_header is not None, "Failed to log in with new password"
 
     # Ensure log out works
@@ -133,9 +134,10 @@ def test_delete_user(auth_method):
     """Test that a user can be deleted."""
     login_data = _register_random()
     assert login_data is not None, "Failed to register"
+    username, password = login_data
 
     # Log the user in
-    auth_header = auth_method(**login_data)
+    auth_header = auth_method(username, password)
     assert auth_header is not None, "Failed to log in"
 
     # Delete the user
@@ -147,5 +149,5 @@ def test_delete_user(auth_method):
     assert resp.status_code != 200, "Session shouldn't exist after user delete"
 
     # Ensure re-login fails
-    auth_header = auth_method(**login_data)
+    auth_header = auth_method(username, password)
     assert auth_header is None, "Logged in to deleted user - uh oh"

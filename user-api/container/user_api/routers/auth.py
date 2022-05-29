@@ -13,15 +13,16 @@ router = APIRouter()
 success = Response(status_code=status.HTTP_200_OK)
 
 
-@router.post("/register")
+@router.post("/users/{username}/create")
 async def register(
-    register_request: api_models.AuthRequest,
+    username: str,
+    user_create_request: api_models.UserCreateRequest,
 ) -> Response:
     """Register a new user."""
     with sanitize_excs():
         await auth.register(
-            username=register_request.username,
-            password=register_request.password,
+            username=username,
+            password=user_create_request.password,
         )
     return success
 
