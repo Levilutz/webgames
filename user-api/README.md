@@ -11,7 +11,7 @@ Python REST API built with [FastAPI](https://fastapi.tiangolo.com/) and [Pydanti
 ## Structure
 
 The [container](container) folder contains the source code for the python api. The contents of this folder are built into the user_api container, and the various functions of the container are accessed through different commands/entrypoints. It contains a few subfolders:
-* [user_api](container/user_api) Is the API itself, accessed with the command `uvicorn <args> user_api.routers.main:app`. Code structure docs at [CODE.md](CODE.md)
+* [user_api_internal](container/user_api_internal) Is the API itself, accessed with the command `uvicorn <args> user_api_internal.routers.main:app`. Code structure docs at [CODE.md](CODE.md)
 * [migrations](container/migrations) Is the source code for database migrations, accessed with the command `python3 -m migrations.entrypoint`. Create new migrations with `bash user-api/container/create_migration.sh <migration name>`, run from repository root.
 * [tests](container/tests) Has the source for linting, unit tests, and integration tests.
 

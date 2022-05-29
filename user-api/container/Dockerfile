@@ -31,7 +31,7 @@ COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONPATH=$PYTHONPATH:/src
 
-COPY user_api /src/user_api
+COPY user_api_internal /src/user_api_internal
 COPY migrations /src/migrations
 COPY tests /src/tests
 COPY create_migration.sh src/create_migration.sh

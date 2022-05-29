@@ -30,10 +30,10 @@ values:
         tag: ${modules.user-api-container.version}
 devMode:
   command: ["uvicorn"]
-  args: ["--port=80", "--host=0.0.0.0", "--reload", "user_api.routers.main:app"]
+  args: ["--port=80", "--host=0.0.0.0", "--reload", "user_api_internal.routers.main:app"]
   sync:
-    - source: user_api
-      target: /src/user_api
+    - source: user_api_internal
+      target: /src/user_api_internal
       exclude:
         - "**/__pycache__/**/*"
       mode: one-way-replica

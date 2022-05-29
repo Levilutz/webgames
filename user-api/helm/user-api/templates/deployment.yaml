@@ -20,7 +20,7 @@ spec:
         - args:
             - "--port=80"
             - "--host=0.0.0.0"
-            - "user_api.routers.main:app"
+            - "user_api_internal.routers.main:app"
           command: ["uvicorn"]
           env:
             - name: DB_ADDRESS
