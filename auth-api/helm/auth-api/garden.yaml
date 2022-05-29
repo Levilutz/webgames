@@ -33,3 +33,12 @@ devMode:
       exclude:
         - "**/__pycache__/**/*"
       mode: one-way-replica
+tests:
+  - name: integration
+    dependencies:
+      - auth-api
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    env:
+      BASE_URL: "http://auth-api"
+    command: ["pytest"]
+    args: ["-v", "tests/integ"]
