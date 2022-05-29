@@ -13,8 +13,8 @@ router = APIRouter()
 success = Response(status_code=status.HTTP_200_OK)
 
 
-@router.post("/users/{username}/create")
-async def register(
+@router.post("/users/{username}")
+async def user_create(
     username: str,
     user_create_request: api_models.UserCreateRequest,
 ) -> Response:

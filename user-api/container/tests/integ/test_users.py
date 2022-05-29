@@ -29,7 +29,7 @@ def _register_random() -> Optional[Tuple[str, str]]:
 
     # Register the user
     body = {"password": password}
-    resp = requests.post(f"{BASE_URL}/users/{username}/create", json=body)
+    resp = requests.post(f"{BASE_URL}/users/{username}", json=body)
     if resp.status_code != 200:
         print(f"Failed to register, maybe expected - {resp.text}")
         return None
