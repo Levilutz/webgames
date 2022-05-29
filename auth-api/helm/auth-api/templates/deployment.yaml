@@ -25,6 +25,10 @@ spec:
           env:
             - name: USER_API_URL
               value: {{ default (printf "http://user-api.%s.svc.cluster.local" .Release.Namespace) .Values.userApiUrl | quote }}
+            {{- if .Values.ingress.prefix }}
+            - name: EXPECTED_PREFIX
+              value: {{ .Values.ingress.prefix | quote }}
+            {{- end }}
           image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: uvicorn
