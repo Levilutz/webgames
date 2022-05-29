@@ -42,7 +42,7 @@ def _login_json(username: str, password: str) -> Optional[Dict[str, str]]:
     if resp.status_code != 200 or "client_token" not in resp.json():
         print(f"Failed to log in, maybe expected - {resp.text}")
         return None
-    return {"Authorization": f"Bearer {resp.json()['client_token']}"}
+    return resp.json()["client_token"]
 
 
 def test_register_login_logout():
@@ -53,8 +53,9 @@ def test_register_login_logout():
     username, password = login_data
 
     # Log the user in
-    auth_header = _login_json(username, password)
-    assert auth_header is not None, "Failed to log in"
+    client_token = _login_json(username, password)
+    assert client_token is not None, "Failed to log in"
+    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Log the user out
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
@@ -72,8 +73,9 @@ def test_change_password():
     username, password = login_data
 
     # Log the user in
-    auth_header = _login_json(username, password)
-    assert auth_header is not None, "Failed to log in"
+    client_token = _login_json(username, password)
+    assert client_token is not None, "Failed to log in"
+    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Change the password
     new_password = _random_alphanum()
@@ -97,8 +99,9 @@ def test_change_password():
     assert should_fail is None, "Old password worked when it shouldn't"
 
     # Ensure new password works
-    auth_header = _login_json(username, new_password)
-    assert auth_header is not None, "Failed to log in with new password"
+    client_token = _login_json(username, new_password)
+    assert client_token is not None, "Failed to log in with new password"
+    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Ensure log out works
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
@@ -112,8 +115,9 @@ def test_delete_user():
     username, password = login_data
 
     # Log the user in
-    auth_header = _login_json(username, password)
-    assert auth_header is not None, "Failed to log in"
+    client_token = _login_json(username, password)
+    assert client_token is not None, "Failed to log in"
+    auth_header = {"Authorization": f"Bearer {client_token}"}
 
     # Delete the user
     resp = requests.delete(f"{BASE_URL}/users/{username}")
@@ -124,5 +128,5 @@ def test_delete_user():
     assert resp.status_code != 200, "Session shouldn't exist after user delete"
 
     # Ensure re-login fails
-    auth_header = _login_json(username, password)
-    assert auth_header is None, "Logged in to deleted user - uh oh"
+    client_token = _login_json(username, password)
+    assert client_token is None, "Logged in to deleted user - uh oh"
