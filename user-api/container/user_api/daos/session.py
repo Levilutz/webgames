@@ -7,7 +7,7 @@ from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
 from user_api.daos.database import AsyncConnection
-from user_api.exceptions import InternalError  # You shouldn't use UserErrors here
+from user_api.exceptions import InternalError
 
 
 SESSION_TTL_HOURS = 12
@@ -34,7 +34,7 @@ class Session(BaseModel):
 
     async def delete(self, conn: AsyncConnection) -> None:
         """Delete the current session."""
-        await self.check_by_id(conn, self.session_id)
+        await self.assert_exists(conn)
 
         async with conn.cursor() as cur:
             await cur.execute(
@@ -72,25 +72,13 @@ class Session(BaseModel):
                 return None
             return sess
 
-    @classmethod
-    async def check_by_id(cls, conn: AsyncConnection, session_id: UUID4) -> Session:
+    async def assert_exists(self, conn: AsyncConnection) -> None:
         """Raise exception if the session doesn't exist."""
-        session = await cls.find_by_id(conn, session_id)
-        if session is None:
-            raise InternalError(f"Cannot find Session - id {session_id} does not exist")
-        return session
-
-    @classmethod
-    async def check_by_token(
-        cls, conn: AsyncConnection, client_token: UUID4
-    ) -> Session:
-        """Raise exception if the session doesn't exist."""
-        session = await cls.find_by_token(conn, client_token)
+        session = await self.find_by_id(conn, self.session_id)
         if session is None:
             raise InternalError(
-                f"Cannot find Session - token {client_token} does not exist"
+                "Session does not exist in db, should have been checked earlier"
             )
-        return session
 
     @classmethod
     async def cleanup_expired(cls, conn: AsyncConnection) -> None:
