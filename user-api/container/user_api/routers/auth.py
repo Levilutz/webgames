@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, status
 from pydantic import UUID4
 
+from user_api.exceptions import NotFoundError
 from user_api.internal import auth
 from user_api.routers import api_models
 from user_api.routers.utils import sanitize_excs
@@ -64,7 +65,8 @@ async def token_get(client_token: UUID4) -> api_models.TokenGetResponse:
     """Get data for a given token."""
     with sanitize_excs():
         user = await auth.find_by_token(client_token)
-        assert user is not None  # TODO Throw a real NotFoundError
+        if user is None:
+            raise NotFoundError("Failed to find token")
     return api_models.TokenGetResponse(username=user.username)
 
 

@@ -83,7 +83,7 @@ def test_register_login_logout(auth_method):
 
     # Ensure the user is still logged out
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
-    assert resp.status_code != 200, "Token should be invalid"
+    assert resp.status_code == 401, "Token should be invalid"
 
 
 @pytest.mark.parametrize("auth_method", [_login_oauth2, _login_json])
@@ -111,7 +111,7 @@ def test_change_password(auth_method):
 
     # Ensure the user is still logged out
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
-    assert resp.status_code != 200, "Token should be invalid"
+    assert resp.status_code == 401, "Token should be invalid"
 
     # Ensure old password doesn't work
     should_fail = auth_method(**login_data)
@@ -143,7 +143,7 @@ def test_delete_user(auth_method):
 
     # Ensure log out fails
     resp = requests.post(f"{BASE_URL}/logout", headers=auth_header)
-    assert resp.status_code != 200, "Session shouldn't exist after user delete"
+    assert resp.status_code == 401, "Session shouldn't exist after user delete"
 
     # Ensure re-login fails
     auth_header = auth_method(**login_data)
