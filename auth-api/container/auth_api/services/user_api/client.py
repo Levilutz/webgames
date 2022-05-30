@@ -41,7 +41,5 @@ def logout(client_token: str) -> None:
 
 def username_from_token(client_token: str) -> str:
     """Get the username associated with this token."""
-    resp = _request_shaped(
-        models.TokenDataResponse, "GET", f"/tokens/{client_token}"
-    )
+    resp = _request_shaped(models.TokenDataResponse, "GET", f"/tokens/{client_token}")
     return resp.username
