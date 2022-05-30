@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterator, List
 
 from fastapi import HTTPException
 
-from user_api.exceptions import ClientError, InternalError, NotFoundError
+from auth_api.exceptions import ClientError, InternalError, NotFoundError
 
 
 @contextmanager
