@@ -64,7 +64,7 @@ async def token_get(client_token: UUID4) -> api_models.TokenGetResponse:
     """Get data for a given token."""
     with sanitize_excs():
         user = await auth.find_by_token(client_token)
-        assert user is not None
+        assert user is not None  # TODO Throw a real NotFoundError
     return api_models.TokenGetResponse(username=user.username)
 
 
