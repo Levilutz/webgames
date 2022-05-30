@@ -4,12 +4,17 @@ from typing import TypeVar, Type
 
 T = TypeVar("T")
 
+TEST_MODE = os.getenv("TEST_MODE")
+
 
 def _get_env_required(name: str) -> str:
     """Retrieve a required environment variable."""
     value = os.getenv(name)
     if not value:
-        raise Exception(f"Required env var not set: {name}")
+        if TEST_MODE:
+            return ""
+        else:
+            raise Exception(f"Required env var not set: {name}")
     return value
 
 
@@ -33,6 +38,11 @@ def _get_env_cast(name: str, cast: Type[T]) -> T:
 
 def _url_clean(url: str) -> str:
     """Remove trailing slash from URL, ensure http:// or https://."""
+    # Default for test mode
+    if TEST_MODE and not url:
+        return "http://localhost"
+
+    # Clean and fix url
     url = url.strip()
     if not url.startswith("http://") and not url.startswith("https://"):
         raise Exception(f"URL '{url}' doesn't start with http:// or https://")

@@ -17,9 +17,4 @@ tests:
     command: ["pytest"]
     args: ["-v", "tests/unit"]
     env:
-      DB_USER: DUD
-      DB_PASS: DUD
-      DB_ADDRESS: DUD
-      DB_PORT: DUD
-      DB_NAME: DUD
-
+      TEST_MODE: "true"

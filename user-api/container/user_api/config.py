@@ -4,6 +4,8 @@ from typing import Optional, TypeVar, Type
 
 T = TypeVar("T")
 
+TEST_MODE = os.getenv("TEST_MODE")
+
 
 def _get_env(name: str, required: bool = False) -> Optional[str]:
     """Retrieve an environment variable.
@@ -16,7 +18,10 @@ def _get_env(name: str, required: bool = False) -> Optional[str]:
     """
     value = os.getenv(name)
     if required and not value:
-        raise Exception(f"Required env var not set: {name}")
+        if TEST_MODE:
+            return ""
+        else:
+            raise Exception(f"Required env var not set: {name}")
     return value
 
 
