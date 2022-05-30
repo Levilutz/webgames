@@ -10,7 +10,7 @@ build:
     - auth-api-container
 dependencies:
   - ingress-nginx  # ingress-nginx self-disables when necessary
-  # - user-api
+  - user-api
 valueFiles:
   - values.yaml
   - values.${environment.name}.yaml

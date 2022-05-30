@@ -28,7 +28,9 @@ def login(username: str, password: str) -> str:
     body = {
         "password": password,
     }
-    resp = _request_shaped(models.LoginResponse, "POST", f"/users/{username}", body)
+    resp = _request_shaped(
+        models.LoginResponse, "POST", f"/users/{username}/login", body
+    )
     return resp.client_token
 
 
@@ -40,6 +42,6 @@ def logout(client_token: str) -> None:
 def username_from_token(client_token: str) -> str:
     """Get the username associated with this token."""
     resp = _request_shaped(
-        models.TokenDataResponse, "DELETE", f"/tokens/{client_token}"
+        models.TokenDataResponse, "GET", f"/tokens/{client_token}"
     )
     return resp.username
