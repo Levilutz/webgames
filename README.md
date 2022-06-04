@@ -25,11 +25,30 @@ Besides that, each of these is services is meant to be an independent playground
 Ideally, general and deployment-specific code should be partitioned enough that it's easy to deploy each service on an arbitrary cluster / cloud provider / domain without significant work. Garden has many features which can easily enable movement towards this goal.
 
 
+## Technologies in Use
+
+Backend Languages / Frameworks / Libraries
+* FastAPI
+* Python
+
+Database technologies
+* PostgresQL
+
+APIs:
+* HTTP (non-RESTful)
+* REST
+
+Container / Orchestration / DevOps
+* Docker
+* Garden
+* Helm
+* Kubernetes
+
+
 ## TODO
 
 ### More certain plans
 
-* Build out user api for a consistent user experience
 * Build chess app with React, REST, Python, PostgresQL stack
 * Add a homepage to direct users to various games
     * More full featured? (user profile stuff, centralized leaderboards, idk)
@@ -38,10 +57,8 @@ Ideally, general and deployment-specific code should be partitioned enough that 
 ### Things I plan to use here but haven't yet
 
 Backend Languages / Frameworks / Libraries
-* FastAPI
 * Flask
 * Golang
-* Python
 * Rust
 * NodeJs
 
@@ -55,9 +72,7 @@ Frontend Languages / Frameworks / Libraries
 Database technologies
 * MongoDB
 * MySQL
-* PostgresQL
 
 APIs:
-* REST (for slower turn-based games)
 * GraphQL (for slower complicated games)
 * WebSockets (for faster real-time games)
