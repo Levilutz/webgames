@@ -1,6 +1,6 @@
 # user-api
 
-A single source API to provide data about users and authentication. Meant to be used both externally and by other APIs.
+A single source API to provide data about users and authentication. Meant for use by internal clients only. Endpoints are re-exposed to external consumers by [auth-api](../auth-api).
 
 
 ## Technologies
@@ -22,14 +22,16 @@ The [helm](helm) folder contains the helm chart for user_api and the subchart fo
 
 ## Usage
 
-By default, attaches to `https://<domain>/api/user`. For more detail, see [interactive API docs](https://games.levilutz.com/api/user/docs).
+In dev environments, attaches to `https://<domain>/dev/user-api`. For more detail, see interactive API docs at [http://localhost:8008/dev/user-api/docs](http://localhost:8008/dev/user-api/docs) once you're connected to a dev environment.
 
 
 ## Development
+
+Before any development work, read the code docs at [CODE.md](CODE.md).
 
 1. Ensure garden is installed - [installation docs](https://docs.garden.io/getting-started/1-installation).
 2. Ensure you have the latest kubernetes cluster configuration in your `~/.kube`.
 3. Navigate to the webgames repository root.
 4. To test, run `garden test user-api`. To develop, run `garden deploy user-api --dev-mode`.
 
-Deploying in dev-mode should make user-api available at [http://localhost:8008/api/users](http://localhost:8008/api/users), with docs available at [http://localhost:8008/api/users/docs](http://localhost:8008/api/users/docs). Code will synchronize live between your local user_api source and the remote cluster deployment, allowing development without having to wait for container rebuilds. 
+Deploying in dev-mode should make user-api available at [http://localhost:8008/dev/user-api](http://localhost:8008/dev/user-api), with docs available at [http://localhost:8008/dev/user-api/docs](http://localhost:8008/dev/user-api/docs). Code will synchronize live between your local user_api source and the remote cluster deployment, allowing development without having to wait for container rebuilds. 
