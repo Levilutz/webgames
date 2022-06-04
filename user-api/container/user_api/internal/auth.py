@@ -8,7 +8,7 @@ import bcrypt
 from pydantic import UUID4
 
 from user_api.daos import Session, User, get_db_connection
-from user_api.exceptions import UserError  # You shouldn't use InternalErrors here
+from user_api.exceptions import ClientError, NotFoundError
 
 
 legal_username_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\\-_\\.]{2,32}$")
@@ -44,15 +44,15 @@ async def register(username: str, password: str) -> User:
 
     # Validate input is legal
     if not _legal_username(username):
-        raise UserError("Invalid username")
+        raise ClientError("Invalid username")
     if not _legal_password(password):
-        raise UserError("Invalid password")
+        raise ClientError("Invalid password")
 
     async with await get_db_connection() as conn:
         # Check username isn't claimed
         existing_user = await User.find_by_username(conn, username)
         if existing_user is not None:
-            raise UserError(f"Username {username} already claimed")
+            raise ClientError(f"Username {username} already claimed")
 
         # Make a new user object
         new_user = User(
@@ -67,16 +67,18 @@ async def register(username: str, password: str) -> User:
     return new_user
 
 
-async def change_password(user_id: UUID4, new_password: str) -> None:
+async def change_password(username: str, new_password: str) -> None:
     """Change a user's password."""
 
     # Check new password is legal
     if not _legal_password(new_password):
-        raise UserError("Invalid password")
+        raise ClientError("Invalid password")
 
     async with await get_db_connection() as conn:
         # Find the user
-        user = await User.check_by_id(conn, user_id)
+        user = await User.find_by_username(conn, username)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
 
         # Update the user's password
         await user.update_password_hash(conn, _password_hash(new_password))
@@ -86,20 +88,20 @@ async def login(username: str, password: str) -> Session:
     """Attempt to a log a user in, return session if successful."""
     # Validate input is legal
     if not _legal_username(username):
-        raise UserError("Invalid username")
+        raise ClientError("Invalid username")
     if not _legal_password(password):
-        raise UserError("Invalid password")
+        raise ClientError("Invalid password")
 
     async with await get_db_connection() as conn:
         # Get the associated user
         user = await User.find_by_username(conn, username)
 
         if user is None:
-            raise UserError("Invalid username or password")
+            raise ClientError("Invalid username or password")
 
         # Validate the password
         if not _password_verify(password, user.password_hash):
-            raise UserError("Invalid username or password")
+            raise ClientError("Invalid username or password")
 
         # Make a new session object
         new_session = Session(
@@ -121,7 +123,7 @@ async def logout_by_session_id(session_id: UUID4) -> None:
         # Find the session
         session = await Session.find_by_id(conn, session_id)
         if session is None:
-            raise UserError("Failed to find given session")
+            raise NotFoundError("Failed to find given session")
 
         # Delete the session
         await session.delete(conn)
@@ -133,18 +135,20 @@ async def logout_by_client_token(client_token: UUID4) -> None:
         # Find the session
         session = await Session.find_by_token(conn, client_token)
         if session is None:
-            raise UserError("Failed to find given session")
+            raise NotFoundError("Failed to find given session")
 
         # Delete the session
         await session.delete(conn)
 
 
-async def delete(user_id: UUID4) -> None:
+async def delete(username: str) -> None:
     """Delete a user account."""
 
     async with await get_db_connection() as conn:
         # Get the user
-        user = await User.check_by_id(conn, user_id)
+        user = await User.find_by_username(conn, username)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
 
         # Delete the user
         await user.delete(conn)

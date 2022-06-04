@@ -1,0 +1,3 @@
+ingress:
+  enabled: true
+  prefix: /api/auth

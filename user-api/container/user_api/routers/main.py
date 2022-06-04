@@ -8,7 +8,7 @@ import orjson
 
 from user_api import config
 from user_api.internal.auth import clean_sessions_loop
-from user_api.routers import users
+from user_api.routers import auth
 
 
 app = FastAPI(root_path=config.EXPECTED_PREFIX)
@@ -22,7 +22,7 @@ set_json_dumps(json_dumps)
 set_json_loads(orjson.loads)
 
 # Add routers
-app.include_router(users.router)
+app.include_router(auth.router)
 
 
 @app.on_event("startup")

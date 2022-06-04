@@ -6,7 +6,7 @@ from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
 from user_api.daos.database import AsyncConnection
-from user_api.exceptions import InternalError  # You shouldn't use UserErrors here
+from user_api.exceptions import InternalError
 
 
 class User(BaseModel):
@@ -31,7 +31,7 @@ class User(BaseModel):
 
     async def update_username(self, conn: AsyncConnection, new_username: str) -> None:
         """Update the user's username if possible."""
-        await self.check_by_id(conn, self.user_id)
+        await self.assert_exists(conn)
 
         async with conn.cursor() as cur:
             await cur.execute(
@@ -45,7 +45,7 @@ class User(BaseModel):
         self, conn: AsyncConnection, new_password_hash: str
     ) -> None:
         """Update the user's password if possible."""
-        await self.check_by_id(conn, self.user_id)
+        await self.assert_exists(conn)
 
         async with conn.cursor() as cur:
             await cur.execute(
@@ -57,7 +57,7 @@ class User(BaseModel):
 
     async def delete(self, conn: AsyncConnection) -> None:
         """Delete the current user from the database."""
-        await self.check_by_id(conn, self.user_id)
+        await self.assert_exists(conn)
 
         async with conn.cursor() as cur:
             await cur.execute(
@@ -87,20 +87,10 @@ class User(BaseModel):
             )
             return await cur.fetchone()
 
-    @classmethod
-    async def check_by_id(cls, conn: AsyncConnection, user_id: UUID4) -> User:
+    async def assert_exists(self, conn: AsyncConnection) -> None:
         """Raise exception if the user id doesn't exist."""
-        user = await cls.find_by_id(conn, user_id)
-        if user is None:
-            raise InternalError(f"Cannot find User - id {user_id} does not exist")
-        return user
-
-    @classmethod
-    async def check_by_username(cls, conn: AsyncConnection, username: str) -> User:
-        """Raise exception if the user id doesn't exist."""
-        user = await cls.find_by_username(conn, username)
+        user = await self.find_by_id(conn, self.user_id)
         if user is None:
             raise InternalError(
-                f"Cannot find User - username {username} does not exist"
+                "User does not exist in db, should have been checked earlier"
             )
-        return user

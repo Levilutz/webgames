@@ -1,14 +1,12 @@
-global:
-  tagBaseOverride:
-
 image:
   pullPolicy: Always
-  repository: docker.io/levilutz/webgames-user-api
-  # If tag is set, it's used
-  # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
+  repository:
   tag:
-  tagBase:
-  tagContainer: api
+
+postgres:
+  pvc:
+    size: 10Gi
+    storageClass: vultr-block-storage
 
 replicas: 1
 

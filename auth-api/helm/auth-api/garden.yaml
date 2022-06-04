@@ -1,0 +1,44 @@
+kind: Module
+name: auth-api
+type: helm
+serviceResource:
+  kind: Deployment
+  name: '{{ include "auth-api.fullname" . }}'
+  containerModule: auth-api-container
+build:
+  dependencies:
+    - auth-api-container
+dependencies:
+  - ingress-nginx  # ingress-nginx self-disables when necessary
+  - user-api
+valueFiles:
+  - values.yaml
+  - values.${environment.name}.yaml
+variables:
+  testsEnabledEnvs:
+    - dev
+    - ci
+values:
+  ingress:
+    className: nginx-${environment.namespace}
+  image:
+    repository: ${modules.auth-api-container.outputs.deployment-image-name}
+    tag: ${modules.auth-api-container.version}
+devMode:
+  command: ["uvicorn"]
+  args: ["--port=80", "--host=0.0.0.0", "--reload", "auth_api.routers.main:app"]
+  sync:
+    - source: auth_api
+      target: /src/auth_api
+      exclude:
+        - "**/__pycache__/**/*"
+      mode: one-way-replica
+tests:
+  - name: integration
+    dependencies:
+      - auth-api
+    disabled: ${!(var.testsEnabledEnvs contains environment.name)}
+    env:
+      BASE_URL: "http://auth-api"
+    command: ["pytest"]
+    args: ["-v", "tests/integ"]

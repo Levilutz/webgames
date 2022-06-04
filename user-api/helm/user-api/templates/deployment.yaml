@@ -41,7 +41,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: postgresAdminUser
-                  name: {{ include "user-api.fullname-postgres" . }}
+                  name: {{ template "postgres.fullname" .Subcharts.postgres }}
             {{- if .Values.ingress.prefix }}
             - name: EXPECTED_PREFIX
               value: {{ .Values.ingress.prefix | quote }}

@@ -1,6 +1,3 @@
-global:
-  tagBaseOverride:
-
 image:
   pullPolicy: Always
   repository: docker.io/postgres
@@ -10,12 +7,8 @@ migrate:
   enabled: true
   image:
     pullPolicy: Always
-    repository: docker.io/levilutz/webgames-user-api
-    # If tag is set, it's used
-    # Otherwise, tagBase (overridable by global.tagBaseOverride) is combined with tagContainer
+    repository:
     tag:
-    tagBase:
-    tagContainer: migrations
 
 pvc:
   size: 1Gi
