@@ -7,7 +7,7 @@ from email_api import config
 
 
 def send_email(
-    to_addrs: List[Address], subject: str, content: str, from_user="no-reply"
+    to_addrs: List[Address], subject: str, content: str, from_user: str = "no-reply"
 ) -> None:
     """Send an email to a given list of recipients."""
     # Construct the email
