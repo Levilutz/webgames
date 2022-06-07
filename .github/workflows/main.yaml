@@ -9,6 +9,31 @@ env:
   GARDEN: /home/runner/.garden/bin/garden
 
 jobs:
+  email-api-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Garden
+        run: curl -sL https://get.garden.io/install.sh | bash
+
+      - name: Connect to cluster
+        run: |
+          mkdir -p $HOME/.kube || true
+          echo "${{ secrets.KUBE_CONFIG_FILE }}" > $HOME/.kube/k_config.yaml
+          kubectl auth can-i get pod
+
+      - name: Build
+        run: $GARDEN --env=ci build email-api-container
+
+      - name: Lint
+        run: $GARDEN --env=ci run test email-api-container lint
+
+      - name: Unit
+        run: $GARDEN --env=ci run test email-api-container unit
+
   user-api-container:
     runs-on: ubuntu-latest
 
