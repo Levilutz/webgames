@@ -1,6 +1,6 @@
 # Code requirements
 bcrypt==3.2.2
-fastapi==0.77.1
+fastapi==0.78.0
 orjson==3.6.8
 psycopg[binary]==3.0.13
 python-multipart==0.0.5
@@ -9,7 +9,7 @@ uvicorn[standard]==0.17.6
 # Test / lint requirements
 black==22.3.0
 flake8==4.0.1
-mypy==0.950
+mypy==0.961
 oauthlib==3.2.0
 pytest==7.1.2
 requests==2.27.1
