@@ -23,9 +23,10 @@ def send_email(
 
     # Send the email
     with SMTP(config.MAIL_SERVER, port=config.MAIL_SERVER_PORT) as smtp:
+        smtp.starttls()
         smtp.send_message(msg)
 
 
 if __name__ == "__main__":
-    dest = Address("Levi Lutz", "levi", "localhost")
+    dest = Address("Levi Lutz", "levi6900", "gmail.com")
     send_email([dest], "Important information", "I'm some content")

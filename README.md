@@ -8,6 +8,16 @@ Browser board games, built like an enterprise webapp. Will be available at [game
 To have fun building stuff from the ground up and to keep myself practiced in various industry-relevant technologies.
 
 
+## Running
+
+One of the targets of this project is to be as independent as possible. Currently the project's only hard requirement is a modern production-ready kubernetes cluster. There are a few softer requirements, listed below in descending order of difficulty to change:
+* CloudFlare for DNS
+    * Required by email-api's DNS manhandling - would take significant work to abstract out to other providers.
+    * Currently expected in the external-dns configuration defined in scripts/cluster_init, very little work to adapt.
+* Vultr for hosting the kubernetes cluster
+    * PVCs all over set `vultr-block-storage` as their `storageClass`, but this is very simple to adapt for other providers.
+
+
 ## Repository Overview
 
 While this repository is a monolith, each directory here is a reasonably independent service / microservice / package. For details, see each directory's `README.md`.
