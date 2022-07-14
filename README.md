@@ -11,8 +11,11 @@ To have fun building stuff from the ground up and to keep myself practiced in va
 ## Running
 
 One of the targets of this project is to have as few dependencies as possible. Currently the project's only hard requirement is a modern kubernetes cluster. There are a few softer requirements, listed below in descending order of difficulty to change:
+* Sendgrid for email
+    * Used by user-api for email verification and password resets. Can be disabled, but those features won't be available. Switching to another email provider would take a moderate amount of work.
 * CloudFlare for DNS
-    * Currently expected in the external-dns configuration defined in [scripts/cluster-init](scripts/cluster-init/setup-external-dns.sh), very little work to adapt.
+    * Currently expected in the external-dns configuration defined in [cluster-init](scripts/cluster-init/setup-external-dns.sh), very little work to adapt.
+    * Has some CNAME records to sendgrid domains so they can add SPF records to validate outbound emails. Switching DNS would require going through domain verification and setup through sendgrid again.
 * Vultr for hosting the kubernetes cluster
     * PVCs all over set `vultr-block-storage` as their `storageClass`, but this is very simple to adapt for other providers.
 
