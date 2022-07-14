@@ -27,7 +27,12 @@ app.include_router(auth.router)
 
 @app.on_event("startup")
 async def app_startup() -> None:
-    """Start background tasks."""
+    """Verify config, start background tasks."""
+    # Validate env vars set
+    if any([var is None for var in config.REQUIRED_ENV_FOR_DEPLOY]):
+        raise Exception(f"Missing required env vars: {config.REQUIRED_ENV_FOR_DEPLOY}")
+
+    # Start cleaning expired sessions
     asyncio.create_task(clean_sessions_loop())
 
 
