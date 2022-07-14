@@ -7,6 +7,7 @@ DB_PASS = os.getenv("DB_PASS")
 DB_ADDRESS = os.getenv("DB_ADDRESS")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
+SENDGRID_KEY = os.getenv("SENDGRID_KEY")
 
 
 # Env vars required for a full deployment, checked in app_startup

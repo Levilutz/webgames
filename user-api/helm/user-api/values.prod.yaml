@@ -1,2 +1,6 @@
 ingress:
   enabled: false  # WE DEFINITELY DON'T WANT THIS EXPOSED IN PROD
+
+sendgrid:
+  required: true
+  secretName: sendgrid

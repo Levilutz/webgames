@@ -1,3 +1,6 @@
+{{- if and .Values.sendgrid.required (empty .Values.sendgrid.secretName) -}}
+{{ fail "sendgrid secret name required" }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,6 +49,12 @@ spec:
             - name: EXPECTED_PREFIX
               value: {{ .Values.ingress.prefix | quote }}
             {{- end }}
+            - name: SENDGRID_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: sendgridKey
+                  name: {{ default "sendgrid" .Values.sendgrid.secretName }}
+                  optional: {{ not .Values.sendgrid.required }}
           image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: uvicorn
