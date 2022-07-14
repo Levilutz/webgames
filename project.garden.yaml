@@ -13,7 +13,7 @@ environments:
 providers:
   - name: kubernetes
     # A single kubernetes provider for all environments
-    context: vke-c95e80be-e8da-45bc-81b3-d1f7b2c2db41
+    context: vke-18543537-42ec-4757-b0fe-0591394f6709
     environments:
       - dev
       - prod
