@@ -44,4 +44,4 @@ helm upgrade --install external-dns external-dns/external-dns \
     --namespace external-dns --create-namespace \
     --set "domainFilters={$DOMAIN}" \
     --set "extraArgs={--cloudflare-proxied, --zone-id-filter=$ZONE_ID}" \
-    --values scripts/cluster-utils/external-dns-values.yaml
+    --values scripts/cluster-init/external-dns-values.yaml
