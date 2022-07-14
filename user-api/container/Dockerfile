@@ -33,6 +33,7 @@ ENV PYTHONPATH=$PYTHONPATH:/src
 
 COPY user_api /src/user_api
 COPY migrations /src/migrations
+COPY stubs /src/stubs
 COPY tests /src/tests
 COPY create_migration.sh src/create_migration.sh
 

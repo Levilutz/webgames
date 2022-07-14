@@ -37,6 +37,12 @@ devMode:
       exclude:
         - "**/__pycache__/**/*"
       mode: one-way-replica
+    - source: stubs
+      target: /src/stubs
+      mode: one-way-replica
+    - source: tests
+      target: /src/tests
+      mode: one-way-replica
 tests:
   - name: integration
     dependencies:
