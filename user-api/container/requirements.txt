@@ -4,6 +4,7 @@ fastapi==0.78.0
 orjson==3.7.7
 psycopg[binary]==3.0.15
 python-multipart==0.0.5
+sendgrid==6.9.7
 uvicorn[standard]==0.18.2
 
 # Test / lint requirements

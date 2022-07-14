@@ -8,6 +8,7 @@ DB_ADDRESS = os.getenv("DB_ADDRESS")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
 SENDGRID_KEY = os.getenv("SENDGRID_KEY")
+EMAIL_FROM = os.getenv("EMAIL_FROM") or "Web Games <no-reply@games.levilutz.com>"
 
 
 # Env vars required for a full deployment, checked in app_startup
