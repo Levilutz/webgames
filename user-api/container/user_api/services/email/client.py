@@ -3,7 +3,7 @@ from typing import List
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, MailSettings, SandBoxMode
 
-from user_api.config import EMAIL_FROM, SENDGRID_KEY
+from user_api.config import EMAIL_ENABLED, EMAIL_FROM, SENDGRID_KEY
 from user_api.exceptions import InternalError
 
 
@@ -15,7 +15,7 @@ def send_email(
     sandbox: bool = False,
 ) -> None:
     """Send email to the given addresses."""
-    if SENDGRID_KEY is None:
+    if not EMAIL_ENABLED or SENDGRID_KEY is None:
         raise InternalError("Cannot send mail without sendgrid key")
 
     message = Mail(
