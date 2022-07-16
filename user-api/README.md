@@ -14,6 +14,7 @@ The [container](container) folder contains the source code for the python api. T
 * [user_api](container/user_api) Is the API itself, accessed with the command `uvicorn <args> user_api.routers.main:app`. Code structure docs at [CODE.md](CODE.md)
 * [migrations](container/migrations) Is the source code for database migrations, accessed with the command `python3 -m migrations.entrypoint`. Create new migrations with `bash user-api/container/create_migration.sh <migration name>`, run from repository root.
 * [tests](container/tests) Has the source for linting, unit tests, and integration tests.
+* [stubs](container/stubs) Has type stubs for python dependencies without their own type hinting.
 
 The [helm](helm) folder contains the helm chart for user_api and the subchart for the database:
 * [user-api](helm/user-api) Is the chart for the API deployment itself.
