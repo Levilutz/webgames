@@ -55,6 +55,15 @@ def change_name(email_address: str, first_name: str, last_name: str) -> None:
     _request("PUT", "/users", body)
 
 
+def change_login_notify(email_address: str, login_notify: bool) -> None:
+    """Change a user's login notification setting."""
+    body = {
+        "email_address": email_address,
+        "login_notify": login_notify,
+    }
+    _request("PUT", "/users", body)
+
+
 def delete_user(email_address: str) -> None:
     """Delete a user account."""
     params = {

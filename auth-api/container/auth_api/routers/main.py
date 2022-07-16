@@ -159,6 +159,20 @@ def change_name(
     return success
 
 
+@app.post("/change_login_notify")
+def change_login_notify(
+    change_login_notify_request: api_models.ChangeLoginNotifyRequest,
+    email_address: str = Depends(dependencies.get_email_address),
+) -> Response:
+    """Change the currently authenticated user's login notification setting."""
+    with sanitize_excs():
+        user_api.change_login_notify(
+            email_address=email_address,
+            login_notify=change_login_notify_request.login_notify,
+        )
+    return success
+
+
 @app.post("/delete")
 def delete_user(
     email_address: str = Depends(dependencies.get_email_address),

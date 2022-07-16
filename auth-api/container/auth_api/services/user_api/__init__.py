@@ -1,4 +1,5 @@
 from auth_api.services.user_api.client import (
+    change_login_notify,
     change_name,
     change_password,
     delete_user,
@@ -13,6 +14,7 @@ from auth_api.services.user_api.client import (
 )
 
 __all__ = [
+    "change_login_notify",
     "change_name",
     "change_password",
     "delete_user",
