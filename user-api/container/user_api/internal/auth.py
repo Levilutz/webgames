@@ -238,6 +238,11 @@ async def request_reset_password(email_address: str) -> PasswordReset:
         if user is None:
             raise NotFoundError("Failed to find given user")
 
+        # Check if request already submitted
+        password_reset = await PasswordReset.find_by_user_id(conn, user.user_id)
+        if password_reset is not None:
+            raise ClientError("Password reset request already pending")
+
         # Make a new password reset object
         password_reset = PasswordReset(
             reset_code=uuid4(),

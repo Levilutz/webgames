@@ -92,7 +92,7 @@ async def user_delete(email_address: str) -> Response:
     return success
 
 
-@router.post("/password_reset")
+@router.post("/password_resets")
 async def password_reset_create(
     password_reset_create_request: api_models.PasswordResetCreateRequest,
 ) -> api_models.PasswordResetCreateResponse:

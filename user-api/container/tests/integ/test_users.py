@@ -1,5 +1,6 @@
 import random
 from typing import Dict, Optional, Tuple
+from uuid import uuid4
 
 import requests
 
@@ -305,3 +306,113 @@ def test_register_lockout():
 
     # Ensure locked out
     _ensure_locked_out(email, verify_code)
+
+
+def request_password_reset() -> Tuple[str, str, str]:
+    login_data = _register_random()
+    assert login_data is not None, "Failed to register"
+    email, password = login_data
+
+    # Log the user in
+    client_token = _login_json(email, password)
+    assert client_token is not None, "Failed to log in"
+
+    # Request a password reset
+    body = {
+        "email_address": email,
+    }
+    resp = requests.post(f"{BASE_URL}/password_resets", json=body)
+    assert resp.status_code == 200, resp.text
+    reset_code = resp.json().get("reset_code")
+    if reset_code in ["", None]:
+        raise Exception("Received blank reset code, may have email mistakenly enabled")
+
+    return email, password, reset_code
+
+
+def test_password_reset():
+    """Test that a user can reset their password."""
+    email, password, reset_code = request_password_reset()
+
+    # Submit the password reset
+    new_password = _random_alphanum()
+    body = {
+        "email_address": email,
+        "password": new_password,
+        "reset_code": reset_code,
+    }
+    resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
+    assert resp.status_code == 200
+
+    # Ensure old password doesn't work
+    client_token = _login_json(email, password)
+    assert client_token is None, "Old password should not work"
+
+    # Ensure new password works
+    client_token = _login_json(email, new_password)
+    assert client_token is not None, "New password should work"
+
+
+def test_password_reset_fails():
+    """Test that the wrong reset code does not work."""
+    email, password, reset_code = request_password_reset()
+
+    # Submit a bad password reset
+    new_password = _random_alphanum()
+    body = {
+        "email_address": email,
+        "password": new_password,
+        "reset_code": str(uuid4()),
+    }
+    resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
+    assert resp.status_code != 200
+    assert "Password reset code invalid" in resp.json()["detail"]
+
+    # Ensure old password still works
+    client_token = _login_json(email, password)
+    assert client_token is not None, "Old password should still work"
+
+    # Ensure new password does not work
+    client_token = _login_json(email, new_password)
+    assert client_token is None, "New password should not work"
+
+
+def test_password_reset_fails_multiuser():
+    """Test that one user's reset code can't be used for another."""
+    email_1, password_1, reset_code_1 = request_password_reset()
+    email_2, password_2, reset_code_2 = request_password_reset()
+
+    # Submit a bad password reset for user 1
+    new_password = _random_alphanum()
+    body = {
+        "email_address": email_1,
+        "password": new_password,
+        "reset_code": reset_code_2
+    }
+    resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
+    assert resp.status_code != 200
+    assert "Password reset code invalid" in resp.json()["detail"]
+
+    # Submit a bad password reset for user 2
+    new_password = _random_alphanum()
+    body = {
+        "email_address": email_2,
+        "password": new_password,
+        "reset_code": reset_code_1
+    }
+    resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
+    assert resp.status_code != 200
+    assert "Password reset code invalid" in resp.json()["detail"]
+
+
+def test_password_reset_no_multiple():
+    """Test that no more than one password reset request can be subnitted."""
+    email, password, reset_code = request_password_reset()
+
+    # Request another password reset
+    body = {
+        "email_address": email,
+    }
+    resp = requests.post(f"{BASE_URL}/password_resets", json=body)
+    assert resp.status_code != 200, resp.text
+    assert "already pending" in resp.json()["detail"]

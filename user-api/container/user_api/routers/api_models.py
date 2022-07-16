@@ -8,7 +8,7 @@ class PasswordResetCreateRequest(BaseModel):
 
 
 class PasswordResetCreateResponse(BaseModel):
-    reset_code: Optional[str]
+    reset_code: Optional[UUID4]
 
 
 class PreUserCreateRequest(BaseModel):
