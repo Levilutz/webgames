@@ -81,6 +81,12 @@ async def user_update(
                 first_name=user_update_request.first_name,
                 last_name=user_update_request.last_name,
             )
+        if user_update_request.login_notify is not None:
+            # Don't expand with ** to avoid leaking request fields
+            await auth.change_login_notify(
+                email_address=user_update_request.email_address,
+                login_notify=user_update_request.login_notify,
+            )
     return success
 
 

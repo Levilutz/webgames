@@ -56,3 +56,4 @@ class UserUpdateRequest(BaseModel):
     password: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    login_notify: Optional[bool] = None

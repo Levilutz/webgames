@@ -223,6 +223,25 @@ async def change_password(email_address: str, new_password: str) -> None:
         await user.update_password_hash(conn, password_hash(new_password))
 
 
+async def change_login_notify(email_address: str, login_notify: bool) -> None:
+    """Change a user's login notification setting."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+        # Update the user's login notification setting
+        await user.update_login_notify(conn, login_notify)
+
+
 async def request_reset_password(email_address: str) -> PasswordReset:
     """Request a password reset."""
 
