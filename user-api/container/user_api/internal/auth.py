@@ -171,6 +171,24 @@ async def register(
     return new_user
 
 
+async def find_by_email_address(email_address: str) -> User:
+    """Find a user by email address."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+    return user
+
+
 async def change_name(
     email_address: str, first_name: Optional[str], last_name: Optional[str]
 ) -> None:
@@ -221,6 +239,25 @@ async def change_password(email_address: str, new_password: str) -> None:
 
         # Update the user's password
         await user.update_password_hash(conn, password_hash(new_password))
+
+
+async def change_login_notify(email_address: str, login_notify: bool) -> None:
+    """Change a user's login notification setting."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+        # Update the user's login notification setting
+        await user.update_login_notify(conn, login_notify)
 
 
 async def request_reset_password(email_address: str) -> PasswordReset:
@@ -328,6 +365,13 @@ async def login(email_address: str, password: str) -> Session:
         # Insert the session into the database
         await new_session.create(conn)
 
+        # Send email to notify of login
+        # Keep in context manager so we don't login if email blows up
+        if EMAIL_ENABLED and user.login_notify:
+            email.send_login_notification_email(
+                to_email=user.full_email(),
+            )
+
     return new_session
 
 
@@ -392,7 +436,12 @@ async def clean_db_loop() -> None:
     """Loop to clean db stuff regularly."""
     while True:
         async with await get_db_connection() as conn:
+            print("Starting db cleanup")
+            print("Cleaning password_resets")
             await PasswordReset.cleanup_expired(conn)
+            print("Cleaning pre_users")
             await PreUser.cleanup_expired(conn)
+            print("Cleaning sessions")
             await Session.cleanup_expired(conn)
+            print("Done db cleanup")
             await asyncio.sleep(3600)

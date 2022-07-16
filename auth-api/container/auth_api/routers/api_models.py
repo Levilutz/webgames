@@ -3,6 +3,10 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class ChangeLoginNotifyRequest(BaseModel):
+    login_notify: bool
+
+
 class ChangeNameRequest(BaseModel):
     first_name: str
     last_name: str
@@ -10,6 +14,13 @@ class ChangeNameRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     password: str
+
+
+class GetUserDataResponse(BaseModel):
+    email_address: str
+    first_name: str
+    last_name: str
+    login_notify: bool
 
 
 class LoginJsonRequest(BaseModel):

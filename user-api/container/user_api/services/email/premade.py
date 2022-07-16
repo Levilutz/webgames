@@ -41,3 +41,17 @@ def send_password_reset_email(to_email: str, reset_code: str) -> None:
         subject=subject,
         html_content=content,
     )
+
+
+def send_login_notification_email(to_email: str) -> None:
+    """Send an email when a new login occurs."""
+    subject = "[Web Games] New login to your account"
+    content = (
+        "You recently logged in to your account. "
+        "If this was unauthorized, please reset your password now."
+    )
+    send_email(
+        to_emails=[to_email],
+        subject=subject,
+        html_content=content,
+    )

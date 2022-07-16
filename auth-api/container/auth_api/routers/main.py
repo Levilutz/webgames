@@ -130,6 +130,22 @@ def logout(client_token: str = Depends(dependencies.get_token)) -> Response:
     return success
 
 
+@app.get("/user_data")
+def get_user_data(
+    email_address: str = Depends(dependencies.get_email_address),
+) -> api_models.GetUserDataResponse:
+    """Get the currently authenticated user's basic data."""
+    with sanitize_excs():
+        user_data = user_api.get_user(email_address=email_address)
+        resp = api_models.GetUserDataResponse(
+            email_address=user_data.email_address,
+            first_name=user_data.first_name,
+            last_name=user_data.last_name,
+            login_notify=user_data.login_notify,
+        )
+    return resp
+
+
 @app.post("/change_password")
 def change_password(
     change_password_request: api_models.ChangePasswordRequest,
@@ -155,6 +171,20 @@ def change_name(
             email_address=email_address,
             first_name=change_name_request.first_name,
             last_name=change_name_request.last_name,
+        )
+    return success
+
+
+@app.post("/change_login_notify")
+def change_login_notify(
+    change_login_notify_request: api_models.ChangeLoginNotifyRequest,
+    email_address: str = Depends(dependencies.get_email_address),
+) -> Response:
+    """Change the currently authenticated user's login notification setting."""
+    with sanitize_excs():
+        user_api.change_login_notify(
+            email_address=email_address,
+            login_notify=change_login_notify_request.login_notify,
         )
     return success
 

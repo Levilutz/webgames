@@ -36,6 +36,13 @@ class UserCreateRequest(BaseModel):
     verify_code: str
 
 
+class UserGetResponse(BaseModel):
+    email_address: str
+    first_name: str
+    last_name: str
+    login_notify: bool
+
+
 class UserResetPasswordRequest(BaseModel):
     email_address: str
     password: str
@@ -56,3 +63,4 @@ class UserUpdateRequest(BaseModel):
     password: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    login_notify: Optional[bool] = None

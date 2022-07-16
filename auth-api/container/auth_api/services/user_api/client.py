@@ -36,6 +36,15 @@ def register(
     _request("POST", "/users", body)
 
 
+def get_user(email_address: str) -> models.GetUserResponse:
+    """Get user data for a given email address."""
+    params = {
+        "email_address": email_address,
+    }
+    resp = _request_shaped(models.GetUserResponse, "GET", "/users", params=params)
+    return resp
+
+
 def change_password(email_address: str, password: str) -> None:
     """Change a user's password."""
     body = {
@@ -51,6 +60,15 @@ def change_name(email_address: str, first_name: str, last_name: str) -> None:
         "email_address": email_address,
         "first_name": first_name,
         "last_name": last_name,
+    }
+    _request("PUT", "/users", body)
+
+
+def change_login_notify(email_address: str, login_notify: bool) -> None:
+    """Change a user's login notification setting."""
+    body = {
+        "email_address": email_address,
+        "login_notify": login_notify,
     }
     _request("PUT", "/users", body)
 
