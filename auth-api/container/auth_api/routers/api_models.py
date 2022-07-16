@@ -40,3 +40,17 @@ class RegisterRequest(BaseModel):
     first_name: str
     last_name: str
     verify_code: str
+
+
+class RequestResetPasswordRequest(BaseModel):
+    email_address: str
+
+
+class RequestResetPasswordResponse(BaseModel):
+    reset_code: Optional[str]
+
+
+class ResetPasswordRequest(BaseModel):
+    email_address: str
+    password: str
+    reset_code: str

@@ -8,6 +8,8 @@ from auth_api.services.user_api.client import (
     logout,
     preregister,
     preregister_verify,
+    request_reset_password,
+    reset_password,
 )
 
 __all__ = [
@@ -20,4 +22,6 @@ __all__ = [
     "logout",
     "preregister",
     "preregister_verify",
+    "request_reset_password",
+    "reset_password",
 ]

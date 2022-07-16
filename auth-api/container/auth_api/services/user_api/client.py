@@ -63,6 +63,27 @@ def delete_user(email_address: str) -> None:
     _request("DELETE", "/users", params=params)
 
 
+def request_reset_password(email_address: str) -> Optional[str]:
+    """Request a password reset."""
+    body = {
+        "email_address": email_address,
+    }
+    resp = _request_shaped(
+        models.RequestPasswordResetResponse, "POST", "/password_resets", body
+    )
+    return resp.reset_code  # Will be None in prod, but actual code in testing / dev
+
+
+def reset_password(email_address: str, new_password: str, reset_code: str) -> None:
+    """Attempt to reset a password."""
+    body = {
+        "email_address": email_address,
+        "password": new_password,
+        "reset_code": reset_code,
+    }
+    _request("POST", "/users/reset_password", body)
+
+
 def login(email_address: str, password: str) -> str:
     """Log a user in, return client_token if success."""
     body = {

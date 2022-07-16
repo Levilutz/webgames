@@ -67,6 +67,33 @@ def register(register_request: api_models.RegisterRequest) -> Response:
     return success
 
 
+@app.post("/request_reset_password")
+def request_reset_password(
+    request_reset_password_request: api_models.RequestResetPasswordRequest,
+) -> api_models.RequestResetPasswordResponse:
+    """Request a password reset."""
+    with sanitize_excs():
+        # Don't expand with ** to avoid leaking request params
+        reset_code = user_api.request_reset_password(
+            email_address=request_reset_password_request.email_address,
+        )
+        resp = api_models.RequestResetPasswordResponse(reset_code=reset_code)
+    return resp
+
+
+@app.post("/reset_password")
+def reset_password(reset_password_request: api_models.ResetPasswordRequest) -> Response:
+    """Reset a user's password."""
+    with sanitize_excs():
+        # Don't expand with ** to avoid leaking request params
+        user_api.reset_password(
+            email_address=reset_password_request.email_address,
+            new_password=reset_password_request.password,
+            reset_code=reset_password_request.reset_code,
+        )
+    return success
+
+
 @app.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()) -> api_models.LoginResponse:
     """Log a user in."""

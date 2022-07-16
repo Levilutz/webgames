@@ -59,14 +59,16 @@ def _request(method: str, path: str, body: Any = None, params: Any = None) -> An
         raise Exception(f"Unexpected response {resp.status_code} - {resp.text}")
 
 
-def _request_shaped(output_obj: Type[T], method: str, path: str, body: Any = None) -> T:
+def _request_shaped(
+    output_obj: Type[T], method: str, path: str, body: Any = None, params: Any = None
+) -> T:
     """Request to user-api, shape the output object."""
     # Ensure output_obj is valid
     if not hasattr(output_obj, "parse_obj"):
         raise Exception(f"Cannot parse into bad type '{type(output_obj)}'")
 
     # Get response
-    resp_raw = _request(method=method, path=path, body=body)
+    resp_raw = _request(method=method, path=path, body=body, params=params)
 
     # Parse object
     # Let parsing exceptions propagate
