@@ -10,7 +10,13 @@ from user_api.config import (
     EMAIL_ENABLED,
     VERIFY_CODE_LENGTH,
 )
-from user_api.daos import PreUser, Session, User, get_db_connection
+from user_api.daos import (
+    PasswordReset,
+    PreUser,
+    Session,
+    User,
+    get_db_connection
+)
 from user_api.exceptions import (
     ClientError,
     NotFoundError,
@@ -313,6 +319,7 @@ async def clean_db_loop() -> None:
     """Loop to clean db stuff regularly."""
     while True:
         async with await get_db_connection() as conn:
-            await Session.cleanup_expired(conn)
+            await PasswordReset.cleanup_expired(conn)
             await PreUser.cleanup_expired(conn)
+            await Session.cleanup_expired(conn)
             await asyncio.sleep(3600)
