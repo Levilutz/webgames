@@ -171,6 +171,24 @@ async def register(
     return new_user
 
 
+async def find_by_email_address(email_address: str) -> User:
+    """Find a user by email address."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+    return user
+
+
 async def change_name(
     email_address: str, first_name: Optional[str], last_name: Optional[str]
 ) -> None:

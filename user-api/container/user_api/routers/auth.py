@@ -59,6 +59,23 @@ async def user_create(
     return success
 
 
+@router.get("/users")
+async def user_get(email_address: str) -> api_models.UserGetResponse:
+    """Get data for a given user."""
+    with sanitize_excs():
+        user = await auth.find_by_email_address(
+            email_address=email_address,
+        )
+        # Don't expand with ** to avoid leaking user data
+        resp = api_models.UserGetResponse(
+            email_address=user.email_address,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            login_notify=user.login_notify,
+        )
+    return resp
+
+
 @router.put("/users")
 async def user_update(
     user_update_request: api_models.UserUpdateRequest,

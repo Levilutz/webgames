@@ -36,6 +36,13 @@ class UserCreateRequest(BaseModel):
     verify_code: str
 
 
+class UserGetResponse(BaseModel):
+    email_address: str
+    first_name: str
+    last_name: str
+    login_notify: bool
+
+
 class UserResetPasswordRequest(BaseModel):
     email_address: str
     password: str
