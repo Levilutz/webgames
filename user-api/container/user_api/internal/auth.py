@@ -436,7 +436,12 @@ async def clean_db_loop() -> None:
     """Loop to clean db stuff regularly."""
     while True:
         async with await get_db_connection() as conn:
+            print("Starting db cleanup")
+            print("Cleaning password_resets")
             await PasswordReset.cleanup_expired(conn)
+            print("Cleaning pre_users")
             await PreUser.cleanup_expired(conn)
+            print("Cleaning sessions")
             await Session.cleanup_expired(conn)
+            print("Done db cleanup")
             await asyncio.sleep(3600)
