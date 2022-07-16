@@ -1,17 +1,23 @@
 from auth_api.services.user_api.client import (
-    register,
+    change_name,
     change_password,
     delete_user,
+    email_address_from_token,
+    register,
     login,
     logout,
-    username_from_token,
+    preregister,
+    preregister_verify,
 )
 
 __all__ = [
-    "register",
+    "change_name",
     "change_password",
     "delete_user",
+    "email_address_from_token",
+    "register",
     "login",
     "logout",
-    "username_from_token",
+    "preregister",
+    "preregister_verify",
 ]
