@@ -20,6 +20,7 @@ class User(BaseModel):
     first_name: str
     last_name: str
     created_time: datetime
+    login_notify: bool = False
 
     async def create(self, conn: AsyncConnection) -> None:
         """Create the current user in the database."""
@@ -36,7 +37,7 @@ class User(BaseModel):
 
         async with conn.cursor() as cur:
             await cur.execute(
-                "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s)",
+                "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 tuple(self.dict().values()),
             )
 
@@ -85,6 +86,22 @@ class User(BaseModel):
             )
 
         self.password_hash = new_password_hash
+
+    async def update_login_notify(
+        self,
+        conn: AsyncConnection,
+        login_notify: bool,
+    ) -> None:
+        """Update the user's login notification setting."""
+        await self.assert_exists(conn)
+
+        async with conn.cursor() as cur:
+            await cur.execute(
+                "UPDATE users SET login_notify = %s WHERE user_id = %s",
+                (login_notify, self.user_id),
+            )
+
+        self.login_notify = login_notify
 
     async def delete(self, conn: AsyncConnection) -> None:
         """Delete the current user from the database."""
