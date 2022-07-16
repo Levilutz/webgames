@@ -57,10 +57,10 @@ def change_name(email_address: str, first_name: str, last_name: str) -> None:
 
 def delete_user(email_address: str) -> None:
     """Delete a user account."""
-    body = {
+    params = {
         "email_address": email_address,
     }
-    _request("DELETE", "/users", body)
+    _request("DELETE", "/users", params=params)
 
 
 def login(email_address: str, password: str) -> str:

@@ -85,10 +85,10 @@ async def user_update(
 
 
 @router.delete("/users")
-async def user_delete(user_delete_request: api_models.UserDeleteRequest) -> Response:
+async def user_delete(email_address: str) -> Response:
     """Delete a user account."""
     with sanitize_excs():
-        await auth.delete(email_address=user_delete_request.email_address)
+        await auth.delete(email_address=email_address)
     return success
 
 

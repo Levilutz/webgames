@@ -169,7 +169,7 @@ def test_delete_user():
     body = {
         "email_address": email,
     }
-    resp = requests.delete(f"{BASE_URL}/users", json=body)
+    resp = requests.delete(f"{BASE_URL}/users", params=body)
     _assert_good_resp(resp)
 
     # Ensure log out fails

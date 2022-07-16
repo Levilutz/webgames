@@ -28,10 +28,6 @@ class UserCreateRequest(BaseModel):
     verify_code: str
 
 
-class UserDeleteRequest(BaseModel):
-    email_address: str
-
-
 class UserLoginRequest(BaseModel):
     email_address: str
     password: str

@@ -24,7 +24,7 @@ def _decode_json_safe(resp: requests.Response) -> Any:
         raise InternalError(f"Failed to parse JSON for '{str(e)}' - {resp.text}")
 
 
-def _request(method: str, path: str, body: Any = None) -> Any:
+def _request(method: str, path: str, body: Any = None, params: Any = None) -> Any:
     """Make a request to the user-api, handle bad status codes.
 
     This doesn't need headers, query string params, etc bc user-api currently doesn't
@@ -38,10 +38,7 @@ def _request(method: str, path: str, body: Any = None) -> Any:
 
     # Make the request
     # Let exceptions propagate as unhandled
-    if body is not None:
-        resp = requests.request(method, url, json=body)
-    else:
-        resp = requests.request(method, url)
+    resp = requests.request(method, url, json=body, params=params)
 
     # If 200, pass result up
     if resp.status_code == 200:
