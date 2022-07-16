@@ -16,6 +16,13 @@ class ChangePasswordRequest(BaseModel):
     password: str
 
 
+class GetUserDataResponse(BaseModel):
+    email_address: str
+    first_name: str
+    last_name: str
+    login_notify: bool
+
+
 class LoginJsonRequest(BaseModel):
     email_address: str
     password: str

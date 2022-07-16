@@ -36,6 +36,15 @@ def register(
     _request("POST", "/users", body)
 
 
+def get_user(email_address: str) -> models.GetUserResponse:
+    """Get user data for a given email address."""
+    params = {
+        "email_address": email_address,
+    }
+    resp = _request_shaped(models.GetUserResponse, "GET", "/users", params=params)
+    return resp
+
+
 def change_password(email_address: str, password: str) -> None:
     """Change a user's password."""
     body = {
