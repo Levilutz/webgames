@@ -23,5 +23,6 @@ REQUIRED_ENV_FOR_DEPLOY = [
     DB_NAME,
 ]
 
+
 # Computed config
 EMAIL_ENABLED = SENDGRID_KEY not in [None, ""]

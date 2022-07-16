@@ -29,3 +29,15 @@ def send_post_verification_email(to_email: str, first_name: str) -> None:
         subject=subject,
         html_content=content,
     )
+
+
+def send_password_reset_email(to_email: str, reset_code: str) -> None:
+    """Send an email with a password reset code."""
+    # TODO make this a webpage with the code as a qsp in a link
+    subject = "[Web Games] Reset your password"
+    content = f"You requested a password reset. Your code is {reset_code}"
+    send_email(
+        to_emails=[to_email],
+        subject=subject,
+        html_content=content,
+    )
