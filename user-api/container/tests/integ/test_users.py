@@ -387,7 +387,7 @@ def test_password_reset_fails_multiuser():
     body = {
         "email_address": email_1,
         "password": new_password,
-        "reset_code": reset_code_2
+        "reset_code": reset_code_2,
     }
     resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
     assert resp.status_code != 200
@@ -398,7 +398,7 @@ def test_password_reset_fails_multiuser():
     body = {
         "email_address": email_2,
         "password": new_password,
-        "reset_code": reset_code_1
+        "reset_code": reset_code_1,
     }
     resp = requests.post(f"{BASE_URL}/users/reset_password", json=body)
     assert resp.status_code != 200
