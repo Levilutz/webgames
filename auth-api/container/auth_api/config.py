@@ -1,48 +1,8 @@
 import os
-from typing import TypeVar, Type
-
-
-T = TypeVar("T")
-
-TEST_MODE = os.getenv("TEST_MODE")
-
-
-def _get_env_required(name: str) -> str:
-    """Retrieve a required environment variable."""
-    value = os.getenv(name)
-    if not value:
-        if TEST_MODE:
-            return ""
-        else:
-            raise Exception(f"Required env var not set: {name}")
-    return value
-
-
-def _get_env_cast(name: str, cast: Type[T]) -> T:
-    """Retrieve a required environment variable and cast it.
-
-    Params:
-        name - the name of the environment variable
-        cast - a Callable & Type to pass the variable through
-
-    Returns: The env var's contents, cast as requested
-    """
-    value = _get_env_required(name)
-    try:
-        return cast(value)  # type: ignore
-    except ValueError as e:
-        raise Exception(
-            f"Cannot cast env var to type '{cast}' - {name}: {value} - {str(e)}"
-        )
 
 
 def _url_clean(url: str) -> str:
     """Remove trailing slash from URL, ensure http:// or https://."""
-    # Default for test mode
-    if TEST_MODE and not url:
-        return "http://localhost"
-
-    # Clean and fix url
     url = url.strip()
     if not url.startswith("http://") and not url.startswith("https://"):
         raise Exception(f"URL '{url}' doesn't start with http:// or https://")
@@ -51,5 +11,16 @@ def _url_clean(url: str) -> str:
     return url
 
 
+# Env var config
 EXPECTED_PREFIX = os.getenv("EXPECTED_PREFIX") or ""
-USER_API_URL = _url_clean(_get_env_required("USER_API_URL"))
+USER_API_URL_DIRTY = os.getenv("USER_API_URL")
+
+
+# Env vars required for a full deployment, checked in app_startup
+REQUIRED_ENV_FOR_DEPLOY = [
+    USER_API_URL_DIRTY,
+]
+
+
+# Computed config
+USER_API_URL = None if USER_API_URL_DIRTY is None else _url_clean(USER_API_URL_DIRTY)

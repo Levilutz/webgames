@@ -30,6 +30,10 @@ def _request(method: str, path: str, body: Any = None, params: Any = None) -> An
     This doesn't need headers, query string params, etc bc user-api currently doesn't
     have any endpoints making use of those.
     """
+    # Backstop to check user api url is actually set
+    if USER_API_URL is None:
+        raise Exception("Missing USER_API_URL env var, should have been checked")
+
     # Prepare args
     if path and path[0] != "/":
         print("Path '{path}' doesn't have leading '/'")  # TODO replace with log warning

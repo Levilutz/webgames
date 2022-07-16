@@ -1,6 +1,7 @@
 import os
 
 
+# Env var config
 EXPECTED_PREFIX = os.getenv("EXPECTED_PREFIX") or ""
 DB_USER = os.getenv("DB_USER")
 DB_PASS = os.getenv("DB_PASS")
@@ -22,4 +23,5 @@ REQUIRED_ENV_FOR_DEPLOY = [
     DB_NAME,
 ]
 
+# Computed config
 EMAIL_ENABLED = SENDGRID_KEY not in [None, ""]

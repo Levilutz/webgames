@@ -13,6 +13,14 @@ app = FastAPI(root_path=config.EXPECTED_PREFIX)
 success = Response(status_code=status.HTTP_200_OK)
 
 
+@app.on_event("startup")
+async def app_startup() -> None:
+    """Verify config, start background tasks."""
+    # Validate env vars set
+    if any([var is None for var in config.REQUIRED_ENV_FOR_DEPLOY]):
+        raise Exception(f"Missing required env vars: {config.REQUIRED_ENV_FOR_DEPLOY}")
+
+
 @app.get("/ping", response_class=PlainTextResponse)
 def ping() -> str:
     """Ping pong."""

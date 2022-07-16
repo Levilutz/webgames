@@ -41,7 +41,7 @@ def _random_email() -> str:
 
 
 def _register_random() -> Optional[Tuple[str, str]]:
-    """Register a random user, return username and password if successful."""
+    """Register a random user, return email and password if successful."""
     # Generate a user we want
     email = _random_email()
     password = _random_alphanum()
@@ -193,7 +193,7 @@ def test_get_token():
 
     # Get the token's associated email
     resp = requests.get(f"{BASE_URL}/tokens/{client_token}")
-    assert resp.status_code == 200, "Failed to find username for token"
+    assert resp.status_code == 200, "Failed to find email for token"
     assert resp.json()["email_address"] == email
 
 

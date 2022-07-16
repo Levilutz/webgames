@@ -16,5 +16,3 @@ tests:
     disabled: ${!(var.testsEnabledEnvs contains environment.name)}
     command: ["pytest"]
     args: ["-v", "tests/unit"]
-    env:
-      TEST_MODE: "true"
