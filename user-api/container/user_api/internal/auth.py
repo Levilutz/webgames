@@ -15,7 +15,7 @@ from user_api.daos import (
     PreUser,
     Session,
     User,
-    get_db_connection
+    get_db_connection,
 )
 from user_api.exceptions import (
     ClientError,
