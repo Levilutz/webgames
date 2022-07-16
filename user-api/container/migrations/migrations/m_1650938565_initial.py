@@ -22,7 +22,6 @@ class Migration(BaseMigration):
                         created_time timestamp NOT NULL,
                         failed_attempts integer
                     );
-                    CREATE INDEX ON pre_users (verify_code);
                     CREATE TABLE users (
                         user_id uuid PRIMARY KEY,
                         email_address varchar(320) UNIQUE NOT NULL,

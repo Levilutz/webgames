@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Expects to be run from code root (.../container in repo, /src in container)
 
 # Expects 1 argument: migration name
 
@@ -15,10 +16,10 @@ fi
 
 c_time=$(date +"%s")
 filename="m_${c_time}_$1.py"
-fullpath="user-api/container/migrations/migrations/$filename"
+fullpath="migrations/migrations/$filename"
 echo "Creating migration $filename"
 
-cp user-api/container/migrations/template.py "$fullpath"
+cp migrations/template.py "$fullpath"
 
 echo "Written to $fullpath"
 
