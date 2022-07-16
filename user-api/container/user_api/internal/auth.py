@@ -79,7 +79,7 @@ async def preregister(email_address: str) -> PreUser:
         if EMAIL_ENABLED:
             email.send_verification_email(
                 to_email=email_address,
-                code=pre_user.verify_code,
+                verify_code=pre_user.verify_code,
             )
 
     return pre_user
@@ -164,7 +164,8 @@ async def register(
             # Keep in context manager so we don't make user if email blows up
             if EMAIL_ENABLED:
                 email.send_post_verification_email(
-                    new_user.full_email(), new_user.first_name
+                    to_email=new_user.full_email(),
+                    first_name=new_user.first_name,
                 )
 
     return new_user
@@ -220,6 +221,73 @@ async def change_password(email_address: str, new_password: str) -> None:
 
         # Update the user's password
         await user.update_password_hash(conn, password_hash(new_password))
+
+
+async def request_reset_password(email_address: str) -> PasswordReset:
+    """Request a password reset."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+        # Make a new password reset object
+        password_reset = PasswordReset(
+            reset_code=uuid4(),
+            user_id=user.user_id,
+            created_time=datetime.utcnow(),
+        )
+
+        # Insert the pre-user into the database
+        await password_reset.create(conn)
+
+        # Send email with the reset code
+        # Keep in context manager so we don't make reset if email blows up
+        if EMAIL_ENABLED:
+            email.send_password_reset_email(
+                to_email=user.full_email(),
+                reset_code=str(password_reset.reset_code),
+            )
+
+    return password_reset
+
+
+async def reset_password(
+    email_address: str, new_password: str, reset_code: UUID4
+) -> None:
+    """Actually execute a password reset, provided the code is correct."""
+
+    email_address = email_address.lower()
+
+    # Validate input
+    if not legal_email_address(email_address):
+        raise ClientError("Invalid email address")
+    if not legal_password(new_password):
+        raise ClientError("Invalid password")
+
+    async with await get_db_connection() as conn:
+        # Find the user
+        user = await User.find_by_email_address(conn, email_address)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+        # Find the password reset
+        password_reset = await PasswordReset.find_by_reset_code(conn, reset_code)
+        if password_reset is None or password_reset.user_id != user.user_id:
+            raise ClientError("Password reset code invalid")
+
+        # Update the user's password
+        await user.update_password_hash(conn, password_hash(new_password))
+
+        # Remove the password reset request
+        await password_reset.delete(conn)
 
 
 async def login(email_address: str, password: str) -> Session:

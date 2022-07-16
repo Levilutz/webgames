@@ -92,6 +92,35 @@ async def user_delete(email_address: str) -> Response:
     return success
 
 
+@router.post("/password_reset")
+async def password_reset_create(
+    password_reset_create_request: api_models.PasswordResetCreateRequest,
+) -> api_models.PasswordResetCreateResponse:
+    """Request a password reset."""
+    with sanitize_excs():
+        password_reset = await auth.request_reset_password(
+            email_address=password_reset_create_request.email_address,
+        )
+        # If email is disabled, pass reset code right back to user
+        reset_code = None if EMAIL_ENABLED else password_reset.reset_code
+        resp = api_models.PasswordResetCreateResponse(reset_code=reset_code)
+    return resp
+
+
+@router.post("/users/reset_password")
+async def user_reset_password(
+    user_reset_password_request: api_models.UserResetPasswordRequest,
+) -> Response:
+    """Reset a user's password, provided the reset_code is correct."""
+    with sanitize_excs():
+        await auth.reset_password(
+            email_address=user_reset_password_request.email_address,
+            new_password=user_reset_password_request.password,
+            reset_code=user_reset_password_request.reset_code,
+        )
+    return success
+
+
 # This is essentially the token create endpoint, it just has specific requirements
 @router.post("/users/login")
 async def user_login(

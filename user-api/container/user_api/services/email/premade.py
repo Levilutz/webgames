@@ -10,9 +10,9 @@ def send_test_email(to_email: str) -> None:
     )
 
 
-def send_verification_email(to_email: str, code: str) -> None:
+def send_verification_email(to_email: str, verify_code: str) -> None:
     """Send an email address confirmation email."""
-    content = f"Your email verification code is {code}"
+    content = f"Your email verification code is {verify_code}"
     send_email(
         to_emails=[to_email],
         subject="[Web Games] Confirm your email address",

@@ -1,6 +1,14 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
+
+
+class PasswordResetCreateRequest(BaseModel):
+    email_address: str
+
+
+class PasswordResetCreateResponse(BaseModel):
+    reset_code: Optional[str]
 
 
 class PreUserCreateRequest(BaseModel):
@@ -26,6 +34,12 @@ class UserCreateRequest(BaseModel):
     first_name: str
     last_name: str
     verify_code: str
+
+
+class UserResetPasswordRequest(BaseModel):
+    email_address: str
+    password: str
+    reset_code: UUID4
 
 
 class UserLoginRequest(BaseModel):
