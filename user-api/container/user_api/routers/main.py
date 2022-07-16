@@ -7,7 +7,7 @@ from psycopg.types.json import set_json_dumps, set_json_loads
 import orjson
 
 from user_api import config
-from user_api.internal.auth import clean_sessions_loop
+from user_api.internal.auth import clean_db_loop
 from user_api.routers import auth
 
 
@@ -27,11 +27,16 @@ app.include_router(auth.router)
 
 @app.on_event("startup")
 async def app_startup() -> None:
-    """Start background tasks."""
-    asyncio.create_task(clean_sessions_loop())
+    """Verify config, start background tasks."""
+    # Validate env vars set
+    if any([var is None for var in config.REQUIRED_ENV_FOR_DEPLOY]):
+        raise Exception(f"Missing required env vars: {config.REQUIRED_ENV_FOR_DEPLOY}")
+
+    # Start cleaning stuff up
+    asyncio.create_task(clean_db_loop())
 
 
 @app.get("/ping", response_class=PlainTextResponse)
-def root() -> str:
+def ping() -> str:
     """Ping pong."""
     return "pong"

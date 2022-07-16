@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Set up an ingress secret in a cluster namespace
+# Set up an ingress certificate secret in a cluster namespace
 # Expects env vars set:
 #   KUBE_NS - kubernetes namespace to get the secret
 #   CRT_FILE - path to ingress cert file

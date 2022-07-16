@@ -3,7 +3,12 @@ from typing import Any, Dict, Iterator, List
 
 from fastapi import HTTPException
 
-from user_api.exceptions import ClientError, InternalError, NotFoundError
+from user_api.exceptions import (
+    ClientError,
+    InternalError,
+    NotFoundError,
+    VerifyFailedError,
+)
 
 
 @contextmanager
@@ -11,6 +16,9 @@ def sanitize_excs(*args: List[Any], **kwargs: Dict[Any, Any]) -> Iterator[None]:
     """Context manager to sanitize exceptions."""
     try:
         yield
+    except VerifyFailedError as e:
+        print(f"VERIFY FAILED ERROR ESCAPED: {str(e)}")  # TODO make this a log crit
+        raise HTTPException(status_code=500)
     except InternalError as e:
         print(f"INTERNAL ERROR: {str(e)}")  # TODO make this a log error
         raise HTTPException(status_code=500)

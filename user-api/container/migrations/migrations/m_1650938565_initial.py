@@ -16,10 +16,19 @@ class Migration(BaseMigration):
             # Create tables
             await cur.execute(
                 """
+                    CREATE TABLE pre_users (
+                        email_address varchar(320) UNIQUE NOT NULL,
+                        verify_code varchar(16) NOT NULL,
+                        created_time timestamp NOT NULL,
+                        failed_attempts integer
+                    );
                     CREATE TABLE users (
                         user_id uuid PRIMARY KEY,
-                        username varchar(32) UNIQUE NOT NULL,
-                        password_hash varchar(60) NOT NULL
+                        email_address varchar(320) UNIQUE NOT NULL,
+                        password_hash varchar(60) NOT NULL,
+                        first_name varchar(32) NOT NULL,
+                        last_name varchar(32) NOT NULL,
+                        created_time timestamp NOT NULL
                     );
                     CREATE TABLE sessions (
                         session_id uuid PRIMARY KEY,

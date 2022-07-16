@@ -3,6 +3,12 @@
 
 set -e
 
+export MYPYPATH=stubs
+
+# No black for stubs (formats .pyi files wrong)
+mypy stubs --strict
+flake8 --max-line-length=88 stubs
+
 mypy user_api --strict
 black --check --diff user_api
 flake8 --max-line-length=88 user_api

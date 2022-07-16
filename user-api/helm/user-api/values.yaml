@@ -17,3 +17,7 @@ ingress:
   tls:
     enabled: false
     secretName:
+
+sendgrid:
+  required: false
+  secretName:

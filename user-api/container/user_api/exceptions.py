@@ -14,3 +14,9 @@ class NotFoundError(Exception):
     """Exceptions caused by access to non-existent resources."""
 
     pass
+
+
+class VerifyFailedError(Exception):
+    """Exceptions caused by failure to verify, handled by increments_failed_attempts."""
+
+    pass

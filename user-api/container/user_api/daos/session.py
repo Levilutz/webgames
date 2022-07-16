@@ -80,6 +80,15 @@ class Session(BaseModel):
                 "Session does not exist in db, should have been checked earlier"
             )
 
+        # Complain on any differences from db
+        if (
+            self.session_id != session.session_id
+            or self.client_token != session.client_token
+            or self.user_id != session.user_id
+            or self.created_time != session.created_time
+        ):
+            raise InternalError(f"Session deviation from db: {self} vs {session}")
+
     @classmethod
     async def cleanup_expired(cls, conn: AsyncConnection) -> None:
         """Clean up expired sessions."""

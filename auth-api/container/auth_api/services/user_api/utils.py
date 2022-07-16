@@ -24,12 +24,16 @@ def _decode_json_safe(resp: requests.Response) -> Any:
         raise InternalError(f"Failed to parse JSON for '{str(e)}' - {resp.text}")
 
 
-def _request(method: str, path: str, body: Any = None) -> Any:
+def _request(method: str, path: str, body: Any = None, params: Any = None) -> Any:
     """Make a request to the user-api, handle bad status codes.
 
     This doesn't need headers, query string params, etc bc user-api currently doesn't
     have any endpoints making use of those.
     """
+    # Backstop to check user api url is actually set
+    if USER_API_URL is None:
+        raise Exception("Missing USER_API_URL env var, should have been checked")
+
     # Prepare args
     if path and path[0] != "/":
         print("Path '{path}' doesn't have leading '/'")  # TODO replace with log warning
@@ -38,10 +42,7 @@ def _request(method: str, path: str, body: Any = None) -> Any:
 
     # Make the request
     # Let exceptions propagate as unhandled
-    if body is not None:
-        resp = requests.request(method, url, json=body)
-    else:
-        resp = requests.request(method, url)
+    resp = requests.request(method, url, json=body, params=params)
 
     # If 200, pass result up
     if resp.status_code == 200:
@@ -58,14 +59,16 @@ def _request(method: str, path: str, body: Any = None) -> Any:
         raise Exception(f"Unexpected response {resp.status_code} - {resp.text}")
 
 
-def _request_shaped(output_obj: Type[T], method: str, path: str, body: Any = None) -> T:
+def _request_shaped(
+    output_obj: Type[T], method: str, path: str, body: Any = None, params: Any = None
+) -> T:
     """Request to user-api, shape the output object."""
     # Ensure output_obj is valid
     if not hasattr(output_obj, "parse_obj"):
         raise Exception(f"Cannot parse into bad type '{type(output_obj)}'")
 
     # Get response
-    resp_raw = _request(method=method, path=path, body=body)
+    resp_raw = _request(method=method, path=path, body=body, params=params)
 
     # Parse object
     # Let parsing exceptions propagate

@@ -10,6 +10,18 @@ AsyncConnection = psycopg.AsyncConnection[Any]
 
 async def get_db_connection() -> psycopg.AsyncConnection[Any]:
     """Get a new db connection."""
+    # Backstop to verify env vars again
+    req_vars = [
+        config.DB_USER,
+        config.DB_PASS,
+        config.DB_ADDRESS,
+        config.DB_PORT,
+        config.DB_NAME,
+    ]
+    if any([var is None for var in req_vars]):
+        raise Exception(f"Missing db env vars: {req_vars}")
+
+    # Create connection
     conn = await psycopg.AsyncConnection.connect(
         user=config.DB_USER,
         password=config.DB_PASS,
