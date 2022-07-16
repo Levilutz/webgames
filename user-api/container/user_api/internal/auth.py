@@ -328,6 +328,13 @@ async def login(email_address: str, password: str) -> Session:
         # Insert the session into the database
         await new_session.create(conn)
 
+        # Send email to notify of login
+        # Keep in context manager so we don't login if email blows up
+        if EMAIL_ENABLED and user.login_notify:
+            email.send_login_notification_email(
+                to_email=user.full_email(),
+            )
+
     return new_session
 
 
