@@ -6,11 +6,9 @@ from typing import Optional
 from psycopg.rows import class_row
 from pydantic import BaseModel, UUID4
 
+from user_api.config import PASSWORD_RESET_TTL_HOURS
 from user_api.daos.database import AsyncConnection
 from user_api.exceptions import InternalError
-
-
-PASSWORD_RESET_TTL_HOURS = 12
 
 
 class PasswordReset(BaseModel):
