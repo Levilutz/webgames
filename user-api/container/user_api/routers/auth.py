@@ -1,8 +1,10 @@
+from typing import Optional
+
 from fastapi import APIRouter, Response, status
 from pydantic import UUID4
 
 from user_api.config import EMAIL_ENABLED
-from user_api.exceptions import NotFoundError
+from user_api.exceptions import ClientError, NotFoundError
 from user_api.internal import auth
 from user_api.routers import api_models
 from user_api.routers.utils import sanitize_excs
@@ -60,12 +62,23 @@ async def user_create(
 
 
 @router.get("/users")
-async def user_get(email_address: str) -> api_models.UserGetResponse:
+async def user_get(
+    email_address: Optional[str] = None, client_token: Optional[UUID4] = None
+) -> api_models.UserGetResponse:
     """Get data for a given user."""
     with sanitize_excs():
-        user = await auth.find_by_email_address(
-            email_address=email_address,
-        )
+        if email_address is not None:
+            user = await auth.find_by_email_address(
+                email_address=email_address,
+            )
+        elif client_token is not None:
+            user = await auth.find_by_token(
+                client_token=client_token,
+            )
+        else:
+            raise ClientError(
+                "Must provide either email or client token when getting user."
+            )
         # Don't expand with ** to avoid leaking user data
         resp = api_models.UserGetResponse(
             email_address=user.email_address,
