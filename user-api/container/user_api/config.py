@@ -12,6 +12,9 @@ SENDGRID_KEY = os.getenv("SENDGRID_KEY")
 EMAIL_FROM = os.getenv("EMAIL_FROM") or "Web Games <no-reply@games.levilutz.com>"
 ALLOWED_FAILED_VERIFICATIONS = int(os.getenv("ALLOWED_FAILED_VERIFICATIONS") or "5")
 VERIFY_CODE_LENGTH = int(os.getenv("VERIFY_CODE_LENGTH") or "6")
+PASSWORD_RESET_TTL_HOURS = int(os.getenv("PASSWORD_RESET_TTL_HOURS") or "12")
+PREUSER_TTL_HOURS = int(os.getenv("PREUSER_TTL_HOURS") or "24")
+SESSION_TTL_HOURS = int(os.getenv("SESSION_TTL_HOURS") or "12")
 
 
 # Env vars required for a full deployment, checked in app_startup

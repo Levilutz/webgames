@@ -6,12 +6,10 @@ from typing import Optional
 from psycopg.rows import class_row
 from pydantic import BaseModel
 
+from user_api.config import PREUSER_TTL_HOURS
 from user_api.daos.database import AsyncConnection
 from user_api.daos.utils import _verify_email_lowercase
 from user_api.exceptions import InternalError
-
-
-PREUSER_TTL_HOURS = 24
 
 
 class PreUser(BaseModel):
