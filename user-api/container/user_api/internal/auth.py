@@ -189,6 +189,24 @@ async def find_by_email_address(email_address: str) -> User:
     return user
 
 
+async def find_by_token(client_token: UUID4) -> User:
+    """Find a user by a client token."""
+
+    async with await get_db_connection() as conn:
+        # Find the session
+        session = await Session.find_by_token(conn, client_token)
+
+        if session is None:
+            raise NotFoundError("Failed to find given session")
+
+        # Find the user
+        user = await User.find_by_id(conn, session.user_id)
+        if user is None:
+            raise NotFoundError("Failed to find given user")
+
+    return user
+
+
 async def change_name(
     email_address: str, first_name: Optional[str], last_name: Optional[str]
 ) -> None:
@@ -416,20 +434,6 @@ async def delete(email_address: str) -> None:
 
         # Delete the user
         await user.delete(conn)
-
-
-async def find_by_token(client_token: UUID4) -> Optional[User]:
-    """Find a user by a client token."""
-
-    async with await get_db_connection() as conn:
-        # Find the session
-        session = await Session.find_by_token(conn, client_token)
-
-        if session is None:
-            return None
-
-        # Find the user and return
-        return await User.find_by_id(conn, session.user_id)
 
 
 async def clean_db_loop() -> None:
