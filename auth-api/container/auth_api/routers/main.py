@@ -31,7 +31,7 @@ def ping() -> str:
 def preregister(
     pre_register_request: api_models.PreRegisterRequest,
 ) -> api_models.PreRegisterResponse:
-    """Pre-register a new user, subitting their email for verification."""
+    """Pre-register a new user, submitting their email for verification."""
     with sanitize_excs():
         verify_code = user_api.preregister(
             email_address=pre_register_request.email_address
