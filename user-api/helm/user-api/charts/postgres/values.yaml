@@ -1,7 +1,7 @@
 image:
   pullPolicy: Always
   repository: docker.io/postgres
-  tag: "14.2"
+  tag: "14.4"
 
 migrate:
   enabled: true
