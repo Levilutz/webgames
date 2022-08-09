@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     {{- include "postgres.labels" . | nindent 4 }}
@@ -9,6 +9,7 @@ spec:
   selector:
     matchLabels:
       {{- include "postgres.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "postgres.fullname" . }}
   template:
     metadata:
       labels:
@@ -38,8 +39,18 @@ spec:
             - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: db-volume
-      volumes:
-        - name: db-volume
-          persistentVolumeClaim:
-            claimName: {{ include "postgres.fullname" . }}
+              name: data
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          {{- include "postgres.labels" . | nindent 10 }}
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.pvc.size }}
+        {{- if .Values.pvc.storageClass }}
+        storageClassName: {{ .Values.pvc.storageClass }}
+        {{- end }}
