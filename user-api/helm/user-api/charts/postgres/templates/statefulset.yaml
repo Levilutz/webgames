@@ -39,12 +39,12 @@ spec:
             - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: {{ include "postgres.fullname" . }}
+              name: data
   volumeClaimTemplates:
     - metadata:
         labels:
           {{- include "postgres.labels" . | nindent 10 }}
-        name: {{ include "postgres.fullname" . }}
+        name: data
       spec:
         accessModes:
           - ReadWriteOnce
