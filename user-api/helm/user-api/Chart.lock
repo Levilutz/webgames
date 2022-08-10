@@ -1,0 +1,6 @@
+dependencies:
+- name: postgres
+  repository: file://../../../util-charts/postgres
+  version: 0.1.0
+digest: sha256:0ea1e098ee58d84b83066cc568ac440a1046e2a423eb38f9837ba71818fac6ea
+generated: "2022-08-09T19:58:14.059616-04:00"
